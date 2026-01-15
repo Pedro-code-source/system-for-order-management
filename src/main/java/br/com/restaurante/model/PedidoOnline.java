@@ -1,15 +1,14 @@
 package br.com.restaurante.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
+@Table(name = "pedidoOnline")
 public class PedidoOnline extends Pedido {
 
     @NotNull(message = "A entrega é obrigatória para pedidos online")

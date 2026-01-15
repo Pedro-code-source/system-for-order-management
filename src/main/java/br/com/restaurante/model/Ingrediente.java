@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Entity
+@Table (name = "ingredientes")
 public class Ingrediente {
 
     @Id

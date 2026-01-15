@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Getter
+@Table (name = "mesa")
 public class Mesa {
 
     @Id

@@ -3,6 +3,7 @@ package br.com.restaurante.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Getter
+@Table(name = "garcom")
 public class Garcom extends Usuario {
 
     @Setter

@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Entity
+@Table (name = "itens")
 public class ItemCardapio {
 
     @Id
