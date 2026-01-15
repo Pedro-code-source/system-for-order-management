@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
 @Entity
 @Getter
@@ -14,18 +17,26 @@ import lombok.Setter;
 public class Cliente extends Usuario {
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O nome é obrigatório")
+    @Column(nullable = false)
     private String nome;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O telefone é obrigatório")
+    @Column(nullable = false)
     private String telefone;
 
     @Setter
-    @NotNull
+    @NotNull(message = "O endereço é obrigatório")
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
+    @JoinColumn(name = "endereco_id", nullable = false)
     private Endereco endereco;
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Pedido> pedidos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Reserva> reservas = new ArrayList<>();
 
     public Cliente(String email, String senha, String nome, String telefone, Endereco endereco) {
         super(email, senha);

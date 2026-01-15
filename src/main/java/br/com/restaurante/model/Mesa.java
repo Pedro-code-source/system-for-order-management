@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Entity
 @Getter
@@ -17,19 +19,28 @@ public class Mesa {
     private Long id;
 
     @Setter
-    @NotNull
-    private int numero;
+    @NotNull(message = "O número da mesa é obrigatório")
+    @Column(nullable = false, unique = true)
+    private Integer numero;
 
     @Setter
-    @NotNull
-    private int capacidade;
+    @NotNull(message = "A capacidade é obrigatória")
+    @Column(nullable = false)
+    private Integer capacidade;
 
     @Setter
-    @NotNull
+    @NotNull(message = "O status inicial é obrigatório")
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private StatusMesa status;
 
-    public Mesa(int numero, int capacidade, StatusMesa status) {
+    @OneToMany(mappedBy = "mesa")
+    private List<PedidoPresencial> pedidosPresenciais;
+
+    @OneToMany(mappedBy = "mesa")
+    private List<Reserva> reservas;
+
+    public Mesa(Integer numero, Integer capacidade, StatusMesa status) {
         this.numero = numero;
         this.capacidade = capacidade;
         this.status = status;

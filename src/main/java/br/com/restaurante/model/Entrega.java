@@ -1,14 +1,10 @@
 package br.com.restaurante.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -20,9 +16,15 @@ public class Entrega {
     private Long id;
 
     @Setter
-    private List<Endereco> enderecos;
+    @NotNull(message = "O endereço de entrega é obrigatório")
+    @ManyToOne
+    @JoinColumn(name = "endereco_id", nullable = false)
+    private Endereco endereco;
 
-    public Entrega(List<Endereco> enderecos) {
-        this.enderecos = enderecos;
+    @OneToOne(mappedBy = "entrega")
+    private PedidoOnline pedidoOnline;
+
+    public Entrega(Endereco endereco) {
+        this.endereco = endereco;
     }
 }

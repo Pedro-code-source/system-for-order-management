@@ -17,11 +17,13 @@ public abstract class Usuario {
     private Long id;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O e-mail é obrigatório")
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "A senha é obrigatória")
+    @Column(nullable = false)
     private String senha;
 
     public Usuario(String email, String senha) {

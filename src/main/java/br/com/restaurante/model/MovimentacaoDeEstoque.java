@@ -1,10 +1,7 @@
 package br.com.restaurante.model;
 
 import br.com.restaurante.model.enums.TipoMovimentacao;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,20 +19,30 @@ public class MovimentacaoDeEstoque {
     private Long id;
 
     @Setter
-    @NotNull
+    @NotNull(message = "A data de criação é obrigatória")
+    @Column(nullable = false)
     private LocalDateTime dataCriacao;
 
     @Setter
-    @NotNull
+    @NotNull(message = "O tipo de movimentação é obrigatório")
+    @Column(nullable = false)
     private TipoMovimentacao tipoMovimentacao;
 
     @Setter
-    @NotNull
+    @NotNull(message = "A quantidade movimentada é obrigatória")
+    @Column(nullable = false)
     private Float quantidade;
 
-    public MovimentacaoDeEstoque(LocalDateTime dataCriacao, TipoMovimentacao tipoMovimentacao, Float quantidade) {
+    @Setter
+    @NotNull(message = "O ingrediente é obrigatório")
+    @ManyToOne
+    @JoinColumn(name = "ingrediente_id", nullable = false)
+    private Ingrediente ingrediente;
+
+    public MovimentacaoDeEstoque(LocalDateTime dataCriacao, TipoMovimentacao tipoMovimentacao, Float quantidade, Ingrediente ingrediente) {
         this.dataCriacao = dataCriacao;
         this.tipoMovimentacao = tipoMovimentacao;
         this.quantidade = quantidade;
+        this.ingrediente = ingrediente;
     }
 }

@@ -1,15 +1,14 @@
 package br.com.restaurante.model;
 
 import br.com.restaurante.model.enums.UnidadeMedida;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -21,16 +20,28 @@ public class Ingrediente {
     private Long id;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O nome do ingrediente é obrigatório")
+    @Column(nullable = false)
     private String nome;
 
     @Setter
-    @NotNull
+    @NotNull(message = "A quantidade inicial é obrigatória")
+    @Column(nullable = false)
     private Float quantidade;
 
     @Setter
-    @NotNull
+    @NotNull(message = "A unidade de medida é obrigatória")
+    @Column(nullable = false)
     private UnidadeMedida unidadeMedida;
+
+    @ManyToMany
+    @JoinTable(name = "itens_ingrediente",
+            joinColumns = @JoinColumn(name = "ingrediente_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<ItemCardapio> itens;
+
+    @OneToMany(mappedBy = "ingrediente")
+    private List<MovimentacaoDeEstoque> movimentacoes;
 
     public Ingrediente(String nome, Float quantidade, UnidadeMedida unidadeMedida) {
         this.nome = nome;

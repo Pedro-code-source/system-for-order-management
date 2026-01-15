@@ -2,7 +2,6 @@ package br.com.restaurante.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,35 +17,38 @@ public class Endereco {
     private Long id;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "A rua é obrigatória")
+    @Column(nullable = false)
     private String rua;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O número é obrigatório")
+    @Column(nullable = false)
     private String numero;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O bairro é obrigatório")
+    @Column(nullable = false)
     private String bairro;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "A cidade é obrigatória")
+    @Column(nullable = false)
     private String cidade;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O CEP é obrigatório")
+    @Column(nullable = false)
     private String cep;
 
-    @NotNull
     @OneToOne(mappedBy = "endereco")
     private Cliente cliente;
 
-    public Endereco(String rua, String numero, String bairro, String cidade, String cep, Cliente cliente) {
+    public Endereco(String rua, String numero, String bairro, String cidade, String cep) {
         this.rua = rua;
         this.numero = numero;
         this.bairro = bairro;
         this.cidade = cidade;
         this.cep = cep;
-        this.cliente = cliente;
     }
 }

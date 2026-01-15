@@ -1,15 +1,14 @@
 package br.com.restaurante.model;
 
 import br.com.restaurante.model.enums.CategoriaItem;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -21,23 +20,33 @@ public class ItemCardapio {
     private Long id;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "O nome do item é obrigatório")
+    @Column(nullable = false)
     private String nome;
 
     @Setter
-    @NotNull
+    @NotNull(message = "O preço é obrigatório")
+    @Column(nullable = false)
     private Double preco;
 
     @Setter
-    @NotBlank
+    @NotBlank(message = "A descrição é obrigatória")
+    @Column(nullable = false)
     private String descricao;
 
     @Setter
-    @NotNull
+    @NotNull(message = "A categoria é obrigatória")
+    @Column(nullable = false)
     private CategoriaItem categoria;
 
     @Setter
     private String urlFoto;
+
+    @ManyToMany(mappedBy = "itens")
+    private List<Pedido> pedidos;
+
+    @ManyToMany(mappedBy = "itens")
+    private List<Ingrediente> ingredientes;
 
     public ItemCardapio(String nome, Double preco, String descricao, CategoriaItem categoria, String urlFoto) {
         this.nome = nome;
