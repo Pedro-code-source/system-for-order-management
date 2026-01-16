@@ -19,7 +19,6 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Setter
     @NotNull(message = "O valor da reserva é obrigatório")
     @Column(nullable = false)
     private Double valorReserva;

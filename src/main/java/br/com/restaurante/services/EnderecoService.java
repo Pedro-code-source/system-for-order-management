@@ -6,42 +6,51 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
-@Transactional
 public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
 
-    public void salvar(Endereco endereco){
-        enderecoRepository.save(endereco);
+    @Transactional
+    public Endereco salvar(Endereco endereco) {
+
+        endereco.setBairro(endereco.getBairro().trim());
+        endereco.setRua(endereco.getRua().trim());
+
+        return enderecoRepository.save(endereco);
     }
 
-    public void deletarPorId(Endereco endereco) {
-
-        Optional<Endereco> id = enderecoRepository.findById(endereco.getId());
-        if (id != null) {
-            enderecoRepository.delete(endereco);
-        } else {
-            throw new RuntimeException();
-    }
+    @Transactional
+    public void deletarPorId(Long id) {
+        if (!enderecoRepository.existsById(id)) {
+            throw new RuntimeException("Endereço não encontrado para deletar.");
+        }
+        enderecoRepository.deleteById(id);
     }
 
-    public void listarTodos(){
-       List<Endereco> lista = enderecoRepository.findAll();
+    public List<Endereco> listarTodos() {
+        return enderecoRepository.findAll();
     }
 
-    public void buscarPorId(Long id){
-        Optional<Endereco> endereco = enderecoRepository.findById(id);
+    public Endereco buscarPorId(Long id) {
+        return enderecoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Endereço não encontrado com ID: " + id));
     }
 
-    public void atualizar(Endereco endereco){
-        enderecoRepository.flush();
+    @Transactional
+    public Endereco atualizar(Long id, Endereco enderecoAtualizado) {
+        Endereco enderecoExistente = buscarPorId(id);
+
+
+        enderecoExistente.setRua(enderecoAtualizado.getRua());
+        enderecoExistente.setNumero(enderecoAtualizado.getNumero());
+        enderecoExistente.setCep(enderecoAtualizado.getCep());
+        enderecoExistente.setBairro(enderecoAtualizado.getBairro());
+        enderecoExistente.setCidade(enderecoAtualizado.getCidade());
+
+        return enderecoRepository.save(enderecoExistente);
     }
-
-
 }

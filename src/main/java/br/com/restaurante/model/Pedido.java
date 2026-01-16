@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -25,6 +26,11 @@ public abstract class Pedido {
     @NotNull(message = "O valor final é obrigatório")
     @Column(nullable = false)
     private Double valorFinal;
+
+    @Setter
+    @NotNull(message = "A data e hora do pedido são obrigatórios")
+    @Column(nullable = false)
+    private LocalDateTime dataHora;
 
     @Setter
     @NotNull(message = "O status do pedido é obrigatório")
@@ -55,11 +61,12 @@ public abstract class Pedido {
     @JoinColumn(name = "garcom_id", nullable = true)
     private Garcom garcom;
 
-    public Pedido(Double valorFinal, StatusPedido status, FormaPagamento formaDePagamento, List<ItemCardapio> itens, Cliente cliente) {
+    public Pedido(Double valorFinal, StatusPedido status, FormaPagamento formaDePagamento, List<ItemCardapio> itens, Cliente cliente, LocalDateTime dataHora) {
         this.valorFinal = valorFinal;
         this.status = status;
         this.formaDePagamento = formaDePagamento;
         this.itens = itens;
         this.cliente = cliente;
+        this.dataHora = dataHora;
     }
 }
