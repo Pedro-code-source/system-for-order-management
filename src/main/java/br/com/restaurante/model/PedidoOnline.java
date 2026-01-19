@@ -15,4 +15,5 @@ public class PedidoOnline extends Pedido {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "entrega_id", nullable = false)
     private Entrega entrega;
+
 }

@@ -24,7 +24,7 @@ public class Garcom extends Usuario {
     private String nome;
 
     @OneToMany(mappedBy = "garcom")
-    private List<Pedido> pedidos = new ArrayList<>();
+    private List<PedidoPresencial> pedidos = new ArrayList<>();
 
     public Garcom(String email, String senha, String nome) {
         super(email, senha);

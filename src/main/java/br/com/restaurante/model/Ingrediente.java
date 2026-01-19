@@ -28,7 +28,7 @@ public class Ingrediente {
     @Setter
     @NotNull(message = "A quantidade inicial é obrigatória")
     @Column(nullable = false)
-    private Float quantidade;
+    private Double quantidade;
 
     @Setter
     @NotNull(message = "A unidade de medida é obrigatória")
@@ -44,7 +44,7 @@ public class Ingrediente {
     @OneToMany(mappedBy = "ingrediente")
     private List<MovimentacaoDeEstoque> movimentacoes;
 
-    public Ingrediente(String nome, Float quantidade, UnidadeMedida unidadeMedida) {
+    public Ingrediente(String nome, Double quantidade, UnidadeMedida unidadeMedida) {
         this.nome = nome;
         this.quantidade = quantidade;
         this.unidadeMedida = unidadeMedida;

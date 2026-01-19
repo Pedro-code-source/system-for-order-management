@@ -32,7 +32,7 @@ public class MovimentacaoDeEstoque {
     @Setter
     @NotNull(message = "A quantidade movimentada é obrigatória")
     @Column(nullable = false)
-    private Float quantidade;
+    private Double quantidade;
 
     @Setter
     @NotNull(message = "O ingrediente é obrigatório")

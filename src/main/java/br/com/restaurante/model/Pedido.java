@@ -61,6 +61,21 @@ public abstract class Pedido {
     @JoinColumn(name = "garcom_id", nullable = true)
     private Garcom garcom;
 
+    public void calcularValorFinal(){
+        valorFinal = itens.stream().mapToDouble(ItemCardapio::getPreco).sum();
+    }
+
+    public void adicionarItem(ItemCardapio item){
+        itens.add(item);
+        calcularValorFinal();
+    }
+
+    public void removerItem(ItemCardapio item){
+        itens.remove(item);
+        calcularValorFinal();
+    }
+
+
     public Pedido(Double valorFinal, StatusPedido status, FormaPagamento formaDePagamento, List<ItemCardapio> itens, Cliente cliente, LocalDateTime dataHora) {
         this.valorFinal = valorFinal;
         this.status = status;
