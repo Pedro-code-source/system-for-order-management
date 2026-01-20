@@ -28,7 +28,7 @@ public class EntregaService {
     public void deletarPorId(Long id) throws Exception {
 
         if (!entregaRepository.existsById(id)){
-            throw new Exception("Entrega não encontrada para ser deletada.");
+            throw new RuntimeException("Entrega não encontrada para ser deletada.");
         }
         else {
             entregaRepository.deleteById(id);

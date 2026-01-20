@@ -71,6 +71,11 @@ public class GarcomService {
         Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
 
+
+        if (itens.isEmpty()) {
+            throw new RuntimeException("Não é possível registrar um pedido sem itens.");
+        }
+
         if (mesa.getStatus() != StatusMesa.LIVRE) {
             throw new RuntimeException("Esta mesa já está ocupada.");
         }

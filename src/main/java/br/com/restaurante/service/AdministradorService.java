@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -26,8 +25,8 @@ public class AdministradorService {
 
     private final AdministradorRepository administradorRepository;
     private final MovimentacaoRepository movimentacaoRepository;
-    private final ItemCardapioRepository itemCardapioRepository;
-    private final IngredienteRepository ingredienteRepository;
+    private final ItemCardapioService itemCardapioService;
+    private final IngredienteService ingredienteService;
 
     @Transactional
     public Administrador salvar(Administrador adm){
@@ -76,11 +75,11 @@ public class AdministradorService {
         ingrediente.setQuantidade(estoqueInicial);
         ingrediente.setUnidadeMedida(unidadeMedida);
 
-        ingredienteRepository.save(ingrediente);
+        ingredienteService.salvar(ingrediente);
     }
 
     @Transactional
-    public void registrarMovimentacao(Ingrediente ingrediente, Float quantidade, TipoMovimentacao tipo){
+    public void registrarMovimentacao(Ingrediente ingrediente, Double quantidade, TipoMovimentacao tipo){
 
         MovimentacaoDeEstoque movimentacaoDeEstoque = new MovimentacaoDeEstoque();
         movimentacaoDeEstoque.setTipoMovimentacao(tipo);
@@ -101,6 +100,6 @@ public class AdministradorService {
         itemCardapio.setUrlFoto(urlFoto);
         itemCardapio.setPreco(preco);
 
-        itemCardapioRepository.save(itemCardapio);
+        itemCardapioService.salvar(itemCardapio);
     }
 }

@@ -1,9 +1,11 @@
 package br.com.restaurante.services;
 
 import br.com.restaurante.model.Endereco;
+import br.com.restaurante.model.Entrega;
 import br.com.restaurante.model.PedidoOnline;
 import br.com.restaurante.model.enums.FormaPagamento;
 import br.com.restaurante.model.enums.StatusPedido;
+import br.com.restaurante.repository.EnderecoRepository;
 import br.com.restaurante.repository.PedidoOnlineRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,8 @@ import java.util.List;
 @Service
 public class PedidoOnlineService {
     private final PedidoOnlineRepository repository;
+
+    private final EnderecoRepository enderecoRepository;
 
     @Transactional
     public PedidoOnline salvar(PedidoOnline objeto) {
@@ -55,16 +59,24 @@ public class PedidoOnlineService {
         salvar(existente);
     }
 
-    public void confirmarEndereco(Long id){
-        PedidoOnline existente = buscarPorId(id);
-        Endereco copiaEndereco = existente.getEntrega().getEndereco();
+    @Transactional
+    public void confirmarEndereco(Long id) {
+        PedidoOnline pedido = buscarPorId(id);
+        Entrega entrega = pedido.getEntrega();
+        Endereco enderecoDoPerfil = entrega.getEndereco();
 
+        Endereco enderecoSnapshot = new Endereco();
+
+        enderecoSnapshot.setRua(enderecoDoPerfil.getRua());
+        enderecoSnapshot.setBairro(enderecoDoPerfil.getBairro());
+        enderecoSnapshot.setCep(enderecoDoPerfil.getCep());
+        enderecoSnapshot.setCidade(enderecoDoPerfil.getCidade());
+        enderecoSnapshot.setNumero(enderecoDoPerfil.getNumero());
+
+        enderecoRepository.save(enderecoSnapshot);
+
+        entrega.setEndereco(enderecoSnapshot);
     }
-
-
-
-
-
 
 }
 
