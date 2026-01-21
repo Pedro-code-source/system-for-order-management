@@ -1,9 +1,8 @@
-package br.com.restaurante.services;
+package br.com.restaurante.service;
 
 import br.com.restaurante.model.Endereco;
 import br.com.restaurante.model.Entrega;
 import br.com.restaurante.model.PedidoOnline;
-import br.com.restaurante.model.enums.FormaPagamento;
 import br.com.restaurante.model.enums.StatusPedido;
 import br.com.restaurante.repository.EnderecoRepository;
 import br.com.restaurante.repository.PedidoOnlineRepository;

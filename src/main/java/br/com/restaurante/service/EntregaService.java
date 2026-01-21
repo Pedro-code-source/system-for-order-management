@@ -1,8 +1,7 @@
-package br.com.restaurante.services;
+package br.com.restaurante.service;
 
 import br.com.restaurante.model.Entrega;
 import br.com.restaurante.model.PedidoOnline;
-import br.com.restaurante.model.enums.StatusPedido;
 import br.com.restaurante.repository.EntregaRepository;
 import br.com.restaurante.repository.PedidoOnlineRepository;
 import jakarta.transaction.Transactional;
@@ -10,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service

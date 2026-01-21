@@ -1,4 +1,4 @@
-package br.com.restaurante.services;
+package br.com.restaurante.service;
 
 import br.com.restaurante.model.ItemCardapio;
 import br.com.restaurante.repository.ItemCardapioRepository;

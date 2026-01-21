@@ -1,7 +1,6 @@
-package br.com.restaurante.services;
+package br.com.restaurante.service;
 
 import br.com.restaurante.model.Ingrediente;
-import br.com.restaurante.model.MovimentacaoDeEstoque;
 import br.com.restaurante.repository.IngredienteRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

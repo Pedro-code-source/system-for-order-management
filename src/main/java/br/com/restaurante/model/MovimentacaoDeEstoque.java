@@ -40,7 +40,7 @@ public class MovimentacaoDeEstoque {
     @JoinColumn(name = "ingrediente_id", nullable = false)
     private Ingrediente ingrediente;
 
-    public MovimentacaoDeEstoque(LocalDateTime dataCriacao, TipoMovimentacao tipoMovimentacao, Float quantidade, Ingrediente ingrediente) {
+    public MovimentacaoDeEstoque(LocalDateTime dataCriacao, TipoMovimentacao tipoMovimentacao, Double quantidade, Ingrediente ingrediente) {
         this.dataCriacao = dataCriacao;
         this.tipoMovimentacao = tipoMovimentacao;
         this.quantidade = quantidade;

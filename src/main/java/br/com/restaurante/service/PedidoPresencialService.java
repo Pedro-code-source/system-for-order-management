@@ -1,4 +1,4 @@
-package br.com.restaurante.services;
+package br.com.restaurante.service;
 
 import br.com.restaurante.model.PedidoPresencial;
 import br.com.restaurante.model.enums.StatusPedido;
