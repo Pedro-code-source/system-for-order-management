@@ -56,10 +56,6 @@ public abstract class Pedido {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "garcom_id", nullable = true)
-    private Garcom garcom;
 
     public void calcularValorFinal(){
         valorFinal = itens.stream().mapToDouble(ItemCardapio::getPreco).sum();

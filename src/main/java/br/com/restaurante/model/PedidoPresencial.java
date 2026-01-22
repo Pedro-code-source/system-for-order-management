@@ -18,4 +18,9 @@ public class PedidoPresencial extends Pedido {
     @ManyToOne
     @JoinColumn(name = "mesa_id", nullable = false)
     private Mesa mesa;
+
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "garcom_id", nullable = true)
+    private Garcom garcom;
 }

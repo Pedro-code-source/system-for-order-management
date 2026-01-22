@@ -41,7 +41,6 @@ public class Endereco {
     @Setter
     @NotBlank(message = "O CEP é obrigatório")
     @Column(nullable = false)
-    @Pattern(regexp = "\\d{8}", message = "O CEP deve conter exatamente 8 dígitos numéricos")
     private String cep;
 
     @OneToOne(mappedBy = "endereco")

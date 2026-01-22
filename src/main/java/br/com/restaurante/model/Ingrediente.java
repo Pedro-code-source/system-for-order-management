@@ -1,6 +1,5 @@
 package br.com.restaurante.model;
 
-import br.com.restaurante.model.enums.UnidadeMedida;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,12 +27,9 @@ public class Ingrediente {
     @Setter
     @NotNull(message = "A quantidade inicial é obrigatória")
     @Column(nullable = false)
-    private Double quantidade;
+    private int quantidade;
 
-    @Setter
-    @NotNull(message = "A unidade de medida é obrigatória")
-    @Column(nullable = false)
-    private UnidadeMedida unidadeMedida;
+    private String unidadeMedida = "G";
 
     @ManyToMany
     @JoinTable(name = "itens_ingrediente",
@@ -44,9 +40,8 @@ public class Ingrediente {
     @OneToMany(mappedBy = "ingrediente")
     private List<MovimentacaoDeEstoque> movimentacoes;
 
-    public Ingrediente(String nome, Double quantidade, UnidadeMedida unidadeMedida) {
+    public Ingrediente(String nome, int quantidade) {
         this.nome = nome;
         this.quantidade = quantidade;
-        this.unidadeMedida = unidadeMedida;
     }
 }

@@ -6,7 +6,6 @@ import br.com.restaurante.model.ItemCardapio;
 import br.com.restaurante.model.MovimentacaoDeEstoque;
 import br.com.restaurante.model.enums.CategoriaItem;
 import br.com.restaurante.model.enums.TipoMovimentacao;
-import br.com.restaurante.model.enums.UnidadeMedida;
 import br.com.restaurante.repository.AdministradorRepository;
 import br.com.restaurante.repository.MovimentacaoRepository;
 import jakarta.transaction.Transactional;
@@ -65,19 +64,18 @@ public class AdministradorService {
         }
     }
     @Transactional
-    public void cadastrarIngrediente(String nome, Double estoqueInicial, UnidadeMedida unidadeMedida){
+    public void cadastrarIngrediente(String nome, int estoqueInicial){
 
         Ingrediente ingrediente = new Ingrediente();
 
         ingrediente.setNome(nome);
         ingrediente.setQuantidade(estoqueInicial);
-        ingrediente.setUnidadeMedida(unidadeMedida);
 
         ingredienteService.salvar(ingrediente);
     }
 
     @Transactional
-    public void registrarMovimentacao(Ingrediente ingrediente, Double quantidade, TipoMovimentacao tipo){
+    public void registrarMovimentacao(Ingrediente ingrediente, int quantidade, TipoMovimentacao tipo){
 
         MovimentacaoDeEstoque movimentacaoDeEstoque = new MovimentacaoDeEstoque();
         movimentacaoDeEstoque.setTipoMovimentacao(tipo);

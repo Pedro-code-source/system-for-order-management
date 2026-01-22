@@ -39,7 +39,7 @@ public class MovimentacaoService {
     }
 
     @Transactional
-    public void registrarEntrada(Ingrediente ingrediente, Double quantidade){
+    public void registrarEntrada(Ingrediente ingrediente, int quantidade){
         Ingrediente existente = ingredienteService.buscarPorId(ingrediente.getId());
 
         MovimentacaoDeEstoque movimentacao = new MovimentacaoDeEstoque();
@@ -55,7 +55,7 @@ public class MovimentacaoService {
     }
 
     @Transactional
-    public void registrarSaida(Ingrediente ingrediente, Double quantidade){
+    public void registrarSaida(Ingrediente ingrediente, int quantidade){
         Ingrediente existente = ingredienteService.buscarPorId(ingrediente.getId());
 
         MovimentacaoDeEstoque movimentacao = new MovimentacaoDeEstoque();

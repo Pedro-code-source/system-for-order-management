@@ -32,7 +32,7 @@ public class MovimentacaoDeEstoque {
     @Setter
     @NotNull(message = "A quantidade movimentada é obrigatória")
     @Column(nullable = false)
-    private Double quantidade;
+    private int quantidade;
 
     @Setter
     @NotNull(message = "O ingrediente é obrigatório")
@@ -40,7 +40,7 @@ public class MovimentacaoDeEstoque {
     @JoinColumn(name = "ingrediente_id", nullable = false)
     private Ingrediente ingrediente;
 
-    public MovimentacaoDeEstoque(LocalDateTime dataCriacao, TipoMovimentacao tipoMovimentacao, Double quantidade, Ingrediente ingrediente) {
+    public MovimentacaoDeEstoque(LocalDateTime dataCriacao, TipoMovimentacao tipoMovimentacao, int quantidade, Ingrediente ingrediente) {
         this.dataCriacao = dataCriacao;
         this.tipoMovimentacao = tipoMovimentacao;
         this.quantidade = quantidade;
