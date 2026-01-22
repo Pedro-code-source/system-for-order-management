@@ -27,7 +27,7 @@ public class Ingrediente {
     @Setter
     @NotNull(message = "A quantidade inicial é obrigatória")
     @Column(nullable = false)
-    private int quantidade;
+    private Integer quantidade;
 
     private String unidadeMedida = "G";
 
@@ -40,7 +40,7 @@ public class Ingrediente {
     @OneToMany(mappedBy = "ingrediente")
     private List<MovimentacaoDeEstoque> movimentacoes;
 
-    public Ingrediente(String nome, int quantidade) {
+    public Ingrediente(String nome, Integer quantidade) {
         this.nome = nome;
         this.quantidade = quantidade;
     }

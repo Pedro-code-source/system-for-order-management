@@ -6,10 +6,7 @@ import br.com.restaurante.model.enums.FormaPagamento;
 import br.com.restaurante.model.enums.StatusMesa;
 import br.com.restaurante.repository.AdministradorRepository;
 import br.com.restaurante.repository.ClienteRepository;
-import br.com.restaurante.service.AdministradorService;
-import br.com.restaurante.service.ClienteService;
-import br.com.restaurante.service.ItemCardapioService;
-import br.com.restaurante.service.MesaService;
+import br.com.restaurante.service.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +42,12 @@ public class RestaurantSystemApplication implements CommandLineRunner {
 
     @Autowired
     EntityManager entityManager;
+    @Autowired
+    private GarcomService garcomService;
+    @Autowired
+    private MovimentacaoService movimentacaoService;
+    @Autowired
+    private IngredienteService ingredienteService;
 
     public static void main(String[] args) {
         SpringApplication.run(RestaurantSystemApplication.class, args);
@@ -70,9 +73,6 @@ public class RestaurantSystemApplication implements CommandLineRunner {
 
             switch (opcao) {
                 case 1:
-                    Administrador administrador = new Administrador("admin@hotmail.com", "admin123");
-
-                    administradorService.salvar(administrador);
 
                     Cliente cliente = new Cliente();
 
@@ -226,53 +226,85 @@ public class RestaurantSystemApplication implements CommandLineRunner {
                     break;
 
                 case 3:
+                        int optEmail = 1;
+                        while (optEmail == 1) {
+                            System.out.println("Digite seu e-mail: ");
+                            String emailAdmin = scanner.next();
 
-                    System.out.println("Digite seu e-mail: ");
-                    String emailAdmin = scanner.next();
+                            if (administradorRepository.existsByEmail(emailAdmin)) {
+                                int senhaAdmin = 1;
 
-                    if (administradorRepository.existsByEmail(emailAdmin)) {
-                        int senhaAdmin = 1;
+                                while (senhaAdmin == 1) {
+                                    System.out.print("\nDigite sua senha: ");
 
-                        while (senhaAdmin == 1) {
-                            System.out.print("\nDigite sua senha: ");
+                                    String opSenha = scanner.next();
 
-                            String opSenha = scanner.next();
+                                    if (administradorRepository.existsBySenha(opSenha)) {
+                                        System.out.println("\n1 - Cadastrar Ingredientes");
+                                        System.out.println("2 - Registrar Movimentação");
+                                        System.out.println("3 - Cadastrar Itens no Cardápio");
+                                        System.out.println("4 - Sair");
+                                        System.out.print("\nEscolha: ");
 
-                            if (administradorRepository.existsBySenha(opSenha)) {
-                                System.out.println("\n1 - Cadastrar Ingredientes");
-                                System.out.println("2 - Registrar Movimentação");
-                                System.out.println("3 - Cadastrar Itens no Cardápio");
-                                System.out.println("4 - Sair");
-                                System.out.print("\nEscolha: ");
+                                        int opcaoAdmin = scanner.nextInt();
+                                        scanner.nextLine();
 
-                                int opcaoAdmin = scanner.nextInt();
-                                scanner.nextLine();
+                                        Administrador administradorEmail = administradorRepository.findByEmail(emailAdmin).orElseThrow();
 
-                                Administrador administradorEmail = administradorRepository.findByEmail(emailAdmin).orElseThrow();
+                                        switch (opcaoAdmin) {
+                                            case 1:
+                                                System.out.println("Nome do Ingrediente: ");
+                                                String nomeIngrediente = scanner.next();
 
-                                switch (opcaoAdmin) {
-                                    case 1:
-                                        System.out.println("Nome do Ingrediente: ");
-                                        String nomeIngrediente = scanner.next();
+                                                System.out.println("Quantidade Inicial (em gramas): ");
+                                                int qtdInicial = scanner.nextInt();
 
-                                        System.out.println("Quantidade Inicial (em gramas): ");
-                                        int qtdInicial = scanner.nextInt();
+                                                administradorService.cadastrarIngrediente(nomeIngrediente, qtdInicial);
 
-                                        administradorService.cadastrarIngrediente(nomeIngrediente, qtdInicial);
+                                                System.out.println("Ingrediente: " + nomeIngrediente + " cadastrado com sucesso!");
 
-                                        System.out.println("Ingrediente: " + nomeIngrediente + " cadastrado com sucesso!");
+                                            case 2:
+                                                System.out.println("O que deseja?\n1- Repor estoque\n2- Dar baixa no estoque");
+                                                int optEstoque = scanner.nextInt();
+
+                                                if (optEstoque == 1){
+                                                    System.out.println("O que você deseja repor?");
+                                                    int cont = 0;
+                                                    List<Ingrediente> lista = ingredienteService.listarTodos();
+
+                                                    for (Ingrediente i : lista){
+                                                        cont++;
+                                                        System.out.println(cont + "- " + i.getNome());
+                                                    }
+                                                    int optIngrediente = scanner.nextInt();
+
+                                                    System.out.println("Quantidade (em gramas): ");
+                                                    int optQuantidade = scanner.nextInt();
+                                                    movimentacaoService.registrarEntrada(lista.get(optIngrediente -1), optQuantidade);
+
+                                                }
+                                        }
+                                        break;
+                                    } else {
+                                        System.out.println("Senha errada!");
+                                        System.out.println("\n1 - Digitar Novamente");
+                                        System.out.println("\n2 - Sair");
+                                    }
+
+                                    senhaAdmin = scanner.nextInt();
                                 }
                                 break;
-                            } else {
-                                System.out.println("Senha errada!");
-                                System.out.println("\n1 - Digitar Novamente");
-                                System.out.println("\n2 - Sair");
+                            }else{
+                                System.out.println("ERROR: O email digitado não existe, deseja tentar novamente?\n1- Sim\n2- Não");
+                                int opt = scanner.nextInt();
+                                if (opt == 1){
+                                    continue;
+                                }
+                                else{
+                                    optEmail = 0;
+                                }
                             }
-
-                            senhaAdmin = scanner.nextInt();
                         }
-                    }
-
 
                 case 9:
                     System.out.println("Saindo...");
