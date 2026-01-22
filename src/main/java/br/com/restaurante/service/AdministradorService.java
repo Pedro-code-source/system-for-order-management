@@ -87,7 +87,7 @@ public class AdministradorService {
     }
 
     @Transactional
-    public void cadastrarItemCardapio(String nome, Double preco, Map<Ingrediente, Double> receita, String descricao, CategoriaItem categoria, String urlFoto){
+    public void cadastrarItemCardapio(String nome, Double preco, Map<String, Integer> receita, String descricao, CategoriaItem categoria, String urlFoto){
 
         ItemCardapio itemCardapio = new ItemCardapio();
         itemCardapio.setCategoria(categoria);

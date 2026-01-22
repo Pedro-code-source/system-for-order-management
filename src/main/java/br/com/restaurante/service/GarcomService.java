@@ -63,11 +63,10 @@ public class GarcomService {
     }
 
     @Transactional
-    public void registrarPedidoPresencial(Long garcomId, Long clienteId, Long mesaId, List<ItemCardapio> itens, FormaPagamento formaPagamento) {
+    public void registrarPedidoPresencial(Long garcomId, Long mesaId, List<ItemCardapio> itens, FormaPagamento formaPagamento) {
 
         Garcom garcom = garcomRepository.findById(garcomId).orElseThrow(() -> new RuntimeException("Garçom não encontrado."));
         Mesa mesa = mesaRepository.findById(mesaId).orElseThrow(() -> new RuntimeException("Mesa não encontrada."));
-        Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
 
 
@@ -86,7 +85,6 @@ public class GarcomService {
         pedidoPresencial.setMesa(mesa);
         pedidoPresencial.setGarcom(garcom);
         pedidoPresencial.setStatus(StatusPedido.PEDIDO_EM_PREPARO);
-        pedidoPresencial.setCliente(cliente);
         pedidoPresencial.setItens(itens);
         pedidoPresencial.setDataHora(LocalDateTime.now());
         pedidoPresencial.setFormaDePagamento(formaPagamento);

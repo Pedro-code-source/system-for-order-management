@@ -43,6 +43,12 @@ public abstract class Pedido {
     private FormaPagamento formaDePagamento;
 
     @Setter
+    @NotNull(message = "O cliente é obrigatório")
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
+    @Setter
     @NotEmpty(message = "O pedido deve conter pelo menos um item")
     @ManyToMany
     @JoinTable(name = "itens_pedido",
@@ -50,11 +56,7 @@ public abstract class Pedido {
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<ItemCardapio> itens;
 
-    @Setter
-    @NotNull(message = "O cliente é obrigatório")
-    @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+
 
 
     public void calcularValorFinal(){
@@ -72,12 +74,11 @@ public abstract class Pedido {
     }
 
 
-    public Pedido(Double valorFinal, StatusPedido status, FormaPagamento formaDePagamento, List<ItemCardapio> itens, Cliente cliente, LocalDateTime dataHora) {
+    public Pedido(Double valorFinal, StatusPedido status, FormaPagamento formaDePagamento, List<ItemCardapio> itens, LocalDateTime dataHora) {
         this.valorFinal = valorFinal;
         this.status = status;
         this.formaDePagamento = formaDePagamento;
         this.itens = itens;
-        this.cliente = cliente;
         this.dataHora = dataHora;
     }
 }
