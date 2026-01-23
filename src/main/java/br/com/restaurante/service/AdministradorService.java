@@ -1,13 +1,14 @@
 package br.com.restaurante.service;
 
-import br.com.restaurante.model.Administrador;
-import br.com.restaurante.model.Ingrediente;
-import br.com.restaurante.model.ItemCardapio;
-import br.com.restaurante.model.MovimentacaoDeEstoque;
+import br.com.restaurante.model.*;
 import br.com.restaurante.model.enums.CategoriaItem;
+import br.com.restaurante.model.enums.StatusMesa;
+import br.com.restaurante.model.enums.StatusReserva;
 import br.com.restaurante.model.enums.TipoMovimentacao;
 import br.com.restaurante.repository.AdministradorRepository;
+import br.com.restaurante.repository.MesaRepository;
 import br.com.restaurante.repository.MovimentacaoRepository;
+import br.com.restaurante.repository.ReservaRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class AdministradorService {
     private final MovimentacaoRepository movimentacaoRepository;
     private final ItemCardapioService itemCardapioService;
     private final IngredienteService ingredienteService;
+    private final ReservaRepository reservaRepository;
+    private final MesaRepository mesaRepository;
 
     @Transactional
     public Administrador salvar(Administrador adm){
@@ -97,5 +100,20 @@ public class AdministradorService {
         itemCardapio.setPreco(preco);
 
         itemCardapioService.salvar(itemCardapio);
+    }
+
+    @Transactional
+    public void cancelarReserva(Long idReserva) {
+
+        Reserva reserva = reservaRepository.findById(idReserva)
+                .orElseThrow(() -> new RuntimeException("Reserva não encontrada."));
+
+        if (reserva.getStatus() != StatusReserva.CONFIRMADA) {
+            throw new RuntimeException("Esta reserva já está cancelada ou finalizada.");
+        }
+        reserva.setStatus(StatusReserva.CANCELADA);
+        reserva.getMesa().setStatus(StatusMesa.LIVRE);
+        reservaRepository.save(reserva);
+        mesaRepository.save(reserva.getMesa());
     }
 }
