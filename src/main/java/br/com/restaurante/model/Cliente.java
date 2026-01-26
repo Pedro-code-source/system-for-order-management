@@ -1,5 +1,6 @@
 package br.com.restaurante.model;
 
+import br.com.restaurante.dtos.DadosCadastroCliente;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,10 +39,11 @@ public class Cliente extends Usuario {
     @OneToMany(mappedBy = "cliente")
     private List<Reserva> reservas = new ArrayList<>();
 
-    public Cliente(String email, String senha, String nome, String telefone, Endereco endereco) {
-        super(email, senha);
-        this.nome = nome;
-        this.telefone = telefone;
-        this.endereco = endereco;
+    public Cliente(DadosCadastroCliente dados) {
+        this.nome = dados.nome();
+        this.setEmail(dados.email());
+        this.telefone = dados.telefone();
+        this.setSenha(dados.senha());
+        this.endereco = new Endereco(dados.endereco());
     }
 }

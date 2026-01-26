@@ -1,5 +1,6 @@
 package br.com.restaurante.model;
 
+import br.com.restaurante.dtos.DadosCadastroItem;
 import br.com.restaurante.model.enums.CategoriaItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -49,11 +50,11 @@ public class ItemCardapio {
     @ManyToMany(mappedBy = "itens")
     private List<Ingrediente> ingredientes;
 
-    public ItemCardapio(String nome, Double preco, String descricao, CategoriaItem categoria, String urlFoto) {
-        this.nome = nome;
-        this.preco = preco;
-        this.descricao = descricao;
-        this.categoria = categoria;
-        this.urlFoto = urlFoto;
+    public ItemCardapio(DadosCadastroItem dados) {
+        this.nome = dados.nome();
+        this.preco = dados.preco();
+        this.descricao = dados.descricao();
+        this.categoria = dados.categoria();
+        this.urlFoto = dados.urlFoto();
     }
 }

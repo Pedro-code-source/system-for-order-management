@@ -1,5 +1,7 @@
 package br.com.restaurante.model;
 
+import br.com.restaurante.dtos.DadosEndereco;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -43,14 +45,15 @@ public class Endereco {
     @Column(nullable = false)
     private String cep;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "endereco")
     private Cliente cliente;
 
-    public Endereco(String rua, String numero, String bairro, String cidade, String cep) {
-        this.rua = rua;
-        this.numero = numero;
-        this.bairro = bairro;
-        this.cidade = cidade;
-        this.cep = cep;
+    public Endereco(DadosEndereco dados) {
+        this.rua = dados.rua();
+        this.numero = dados.numero();
+        this.bairro = dados.bairro();
+        this.cidade = dados.cidade();
+        this.cep = dados.cep();
     }
 }

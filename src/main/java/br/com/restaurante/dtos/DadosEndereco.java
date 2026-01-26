@@ -1,7 +1,6 @@
 package br.com.restaurante.dtos;
 
 import br.com.restaurante.model.Endereco;
-import jakarta.validation.constraints.NotNull;
 
 public record DadosEndereco(
         String cep,

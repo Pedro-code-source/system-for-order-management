@@ -32,4 +32,16 @@ public class ItemCardapioService {
     public void deletarPorId(Long id) {
         itemRepository.deleteById(id);
     }
+
+    @Transactional
+    public ItemCardapio atualizar(Long id, ItemCardapio novosDados) {
+        ItemCardapio itemExistente = buscarPorId(id);
+
+        itemExistente.setNome(novosDados.getNome());
+        itemExistente.setDescricao(novosDados.getDescricao());
+        itemExistente.setPreco(novosDados.getPreco());
+        itemExistente.setCategoria(novosDados.getCategoria());
+
+        return itemRepository.save(itemExistente);
+    }
 }

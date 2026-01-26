@@ -3,9 +3,8 @@ package br.com.restaurante.controller;
 import br.com.restaurante.dtos.DadosCadastroCliente;
 import br.com.restaurante.dtos.DadosListagemCliente;
 import br.com.restaurante.model.Cliente;
-import br.com.restaurante.model.Endereco;
-import br.com.restaurante.repository.ClienteRepository;
 import br.com.restaurante.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,39 +17,49 @@ import java.util.List;
 @RequestMapping("/clientes")
 public class ClienteController {
 
-    @Autowired private ClienteService clienteService;
-    @Autowired private ClienteRepository clienteRepository;
+    @Autowired
+    private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity cadastrar(@RequestBody DadosCadastroCliente dados, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<DadosListagemCliente> cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriComponentsBuilder uriBuilder) {
+        Cliente cliente = new Cliente(dados);
 
-        Cliente cliente = new Cliente();
-        cliente.setEmail(dados.email());
-        cliente.setSenha(dados.senha());
-        cliente.setNome(dados.nome());
-        cliente.setTelefone(dados.telefone());
+        Cliente clienteSalvo = clienteService.salvar(cliente);
 
-        Endereco endereco = new Endereco();
+        URI uri = uriBuilder.path("/clientes/{id}").buildAndExpand(clienteSalvo.getId()).toUri();
 
-        endereco.setCep(dados.endereco().cep());
-        endereco.setNumero(dados.endereco().numero());
-        endereco.setRua(dados.endereco().rua());
-        endereco.setCidade(dados.endereco().cidade());
-        endereco.setBairro(dados.endereco().bairro());
-
-        cliente.setEndereco(endereco);
-
-        clienteService.salvar(cliente);
-
-        URI uri = uriComponentsBuilder.path("/clientes/{id}").buildAndExpand(cliente.getId()).toUri();
-
-        return ResponseEntity.created(uri).body("Cliente Cadastrado com ID: " + cliente.getId());
+        return ResponseEntity.created(uri).body(new DadosListagemCliente(clienteSalvo));
     }
 
     @GetMapping
     public ResponseEntity<List<DadosListagemCliente>> listar() {
-        var lista = clienteRepository.findAll();
-        var listaDto = lista.stream().map(DadosListagemCliente::new).toList();
-        return ResponseEntity.ok(listaDto);
+        var lista = clienteService.listarTodos().stream()
+                .map(DadosListagemCliente::new)
+                .toList();
+
+        return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DadosListagemCliente> buscarPorId(@PathVariable Long id) {
+        Cliente cliente = clienteService.buscarPorId(id);
+
+        return ResponseEntity.ok(new DadosListagemCliente(cliente));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DadosListagemCliente> atualizar(@PathVariable Long id, @RequestBody @Valid DadosCadastroCliente dados) {
+        Cliente novosDados = new Cliente(dados);
+
+        Cliente clienteAtualizado = clienteService.atualizar(id, novosDados);
+
+        return ResponseEntity.ok(new DadosListagemCliente(clienteAtualizado));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        clienteService.deletarPorId(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
