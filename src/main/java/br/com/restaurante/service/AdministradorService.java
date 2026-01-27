@@ -1,5 +1,6 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroIngrediente;
 import br.com.restaurante.model.*;
 import br.com.restaurante.model.enums.CategoriaItem;
 import br.com.restaurante.model.enums.StatusMesa;
@@ -67,14 +68,8 @@ public class AdministradorService {
         }
     }
     @Transactional
-    public void cadastrarIngrediente(String nome, int estoqueInicial){
-
-        Ingrediente ingrediente = new Ingrediente();
-
-        ingrediente.setNome(nome);
-        ingrediente.setQuantidade(estoqueInicial);
-
-        ingredienteService.salvar(ingrediente);
+    public Ingrediente cadastrarIngrediente(DadosCadastroIngrediente dto){
+        return ingredienteService.salvar(dto);
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroPedidoOnline;
 import br.com.restaurante.model.Endereco;
 import br.com.restaurante.model.Entrega;
 import br.com.restaurante.model.PedidoOnline;
@@ -38,6 +39,27 @@ public class PedidoOnlineService {
     public void deletarPorId(Long id){
         repository.deleteById(id);
     }
+
+    @Transactional
+    public PedidoOnline atualizar(Long id, DadosCadastroPedidoOnline dto) {
+
+        PedidoOnline pedido = buscarPorId(id);
+
+        if (pedido.getStatus() == StatusPedido.PEDIDO_CANCELADO) {
+            throw new RuntimeException("Pedidos cancelados não podem ser alterados.");
+        }
+
+        if (dto.formaPagamento() != null) {
+            pedido.setFormaDePagamento(dto.formaPagamento());
+        }
+
+        if (dto.status() != null) {
+            pedido.setStatus(dto.status());
+        }
+
+        return repository.save(pedido);
+    }
+
 
     @Transactional
     public void finalizarPedido(Long id){

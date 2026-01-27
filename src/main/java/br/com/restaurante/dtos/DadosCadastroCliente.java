@@ -5,5 +5,5 @@ public record DadosCadastroCliente(
         String email,
         String telefone,
         String senha,
-        DadosEndereco endereco
+        DadosCadastroEndereco endereco
 ) {}

@@ -1,6 +1,7 @@
 package br.com.restaurante.model;
 
 import br.com.restaurante.model.enums.TipoMovimentacao;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -38,6 +39,7 @@ public class MovimentacaoDeEstoque {
     @NotNull(message = "O ingrediente é obrigatório")
     @ManyToOne
     @JoinColumn(name = "ingrediente_id", nullable = false)
+    @JsonIgnore
     private Ingrediente ingrediente;
 
     public MovimentacaoDeEstoque(LocalDateTime dataCriacao, TipoMovimentacao tipoMovimentacao, Integer quantidade, Ingrediente ingrediente) {

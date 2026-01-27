@@ -1,5 +1,6 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroEndereco;
 import br.com.restaurante.model.Endereco;
 import br.com.restaurante.repository.EnderecoRepository;
 import jakarta.transaction.Transactional;
@@ -15,10 +16,9 @@ public class EnderecoService {
     private final EnderecoRepository enderecoRepository;
 
     @Transactional
-    public Endereco salvar(Endereco endereco) {
+    public Endereco salvar(DadosCadastroEndereco dto) {
 
-        endereco.setBairro(endereco.getBairro().trim());
-        endereco.setRua(endereco.getRua().trim());
+        Endereco endereco = new Endereco(dto);
 
         return enderecoRepository.save(endereco);
     }

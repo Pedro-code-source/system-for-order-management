@@ -1,5 +1,7 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroGarcom;
+import br.com.restaurante.dtos.DadosCadastroPedidoPresencial;
 import br.com.restaurante.model.*;
 import br.com.restaurante.model.enums.FormaPagamento;
 import br.com.restaurante.model.enums.StatusMesa;
@@ -26,7 +28,11 @@ public class GarcomService {
     private final MesaRepository mesaRepository;
 
     @Transactional
-    public Garcom salvar(Garcom garcom) {
+    public Garcom salvar(DadosCadastroGarcom dto) {
+        Garcom garcom = new Garcom();
+        garcom.setSenha(dto.senha());
+        garcom.setEmail(dto.email());
+        garcom.setNome(dto.nome());
         return garcomRepository.save(garcom);
     }
 
@@ -51,26 +57,26 @@ public class GarcomService {
     }
 
     @Transactional
-    public void atualizar(Long id, Garcom novoGarcom) {
+    public Garcom atualizar(Long id, DadosCadastroGarcom dto) {
 
         Garcom existente = buscarPorId(id);
 
-        existente.setNome(novoGarcom.getNome());
-        existente.setEmail(novoGarcom.getEmail());
-        existente.setSenha(novoGarcom.getSenha());
+        existente.setNome(dto.nome());
+        existente.setEmail(dto.email());
+        existente.setSenha(dto.senha());
 
-        garcomRepository.save(existente);
+        return garcomRepository.save(existente);
     }
 
     @Transactional
-    public void registrarPedidoPresencial(Long garcomId, Long mesaId, List<ItemCardapio> itens, FormaPagamento formaPagamento) {
+    public void registrarPedidoPresencial(DadosCadastroPedidoPresencial dto) {
 
-        Garcom garcom = garcomRepository.findById(garcomId).orElseThrow(() -> new RuntimeException("Garçom não encontrado."));
-        Mesa mesa = mesaRepository.findById(mesaId).orElseThrow(() -> new RuntimeException("Mesa não encontrada."));
+        Garcom garcom = garcomRepository.findById(dto.garcom().getId()).orElseThrow(() -> new RuntimeException("Garçom não encontrado."));
+        Mesa mesa = mesaRepository.findById(dto.mesa().getId()).orElseThrow(() -> new RuntimeException("Mesa não encontrada."));
 
 
 
-        if (itens.isEmpty()) {
+        if (dto.itens().isEmpty()) {
             throw new RuntimeException("Não é possível registrar um pedido sem itens.");
         }
 
@@ -78,16 +84,16 @@ public class GarcomService {
             throw new RuntimeException("Esta mesa já está ocupada.");
         }
 
-        Double valorTotal = itens.stream().mapToDouble(ItemCardapio::getPreco).sum();
+        Double valorTotal = dto.itens().stream().mapToDouble(ItemCardapio::getPreco).sum();
 
         PedidoPresencial pedidoPresencial = new PedidoPresencial();
 
         pedidoPresencial.setMesa(mesa);
         pedidoPresencial.setGarcom(garcom);
         pedidoPresencial.setStatus(StatusPedido.PEDIDO_EM_PREPARO);
-        pedidoPresencial.setItens(itens);
+        pedidoPresencial.setItens(dto.itens());
         pedidoPresencial.setDataHora(LocalDateTime.now());
-        pedidoPresencial.setFormaDePagamento(formaPagamento);
+        pedidoPresencial.setFormaDePagamento(dto.formaPagamento());
         pedidoPresencial.setValorFinal(valorTotal);
 
         mesa.setStatus(StatusMesa.OCUPADA);

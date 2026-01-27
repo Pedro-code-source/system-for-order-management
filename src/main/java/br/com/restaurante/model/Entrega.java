@@ -1,6 +1,7 @@
 package br.com.restaurante.model;
 
 import br.com.restaurante.model.enums.StatusPedido;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -21,9 +22,11 @@ public class Entrega {
     @NotNull(message = "O endereço de entrega é obrigatório")
     @ManyToOne
     @JoinColumn(name = "endereco_id", nullable = false)
+    @JsonIgnore
     private Endereco endereco;
 
     @OneToOne(mappedBy = "entrega")
+    @JsonIgnore
     private PedidoOnline pedidoOnline;
 
     public Entrega(Endereco endereco) {

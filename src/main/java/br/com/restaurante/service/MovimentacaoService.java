@@ -1,8 +1,10 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroIngrediente;
 import br.com.restaurante.model.Ingrediente;
 import br.com.restaurante.model.MovimentacaoDeEstoque;
 import br.com.restaurante.model.enums.TipoMovimentacao;
+import br.com.restaurante.repository.IngredienteRepository;
 import br.com.restaurante.repository.MovimentacaoRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,7 @@ public class MovimentacaoService {
 
     private final MovimentacaoRepository movimentacaoRepository;
     private final IngredienteService ingredienteService;
+    private final IngredienteRepository ingredienteRepository;
 
     @Transactional
     public MovimentacaoDeEstoque salvar(MovimentacaoDeEstoque objeto) {
@@ -48,8 +51,9 @@ public class MovimentacaoService {
         movimentacao.setQuantidade(quantidade);
         movimentacao.setDataCriacao(LocalDateTime.now());
 
+
         existente.setQuantidade(existente.getQuantidade() + quantidade);
-        ingredienteService.salvar(existente);
+        ingredienteRepository.save(existente);
 
         movimentacaoRepository.save(movimentacao);
     }
@@ -66,7 +70,7 @@ public class MovimentacaoService {
 
         if (existente.getQuantidade() >= quantidade){
             existente.setQuantidade(existente.getQuantidade() - quantidade);
-            ingredienteService.salvar(existente);
+            ingredienteRepository.save(existente);
         }
         else {
             throw new RuntimeException("Quantidade indisponível em estoque.");

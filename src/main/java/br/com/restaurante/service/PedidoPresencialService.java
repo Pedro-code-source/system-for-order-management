@@ -1,5 +1,6 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroPedidoPresencial;
 import br.com.restaurante.model.PedidoPresencial;
 import br.com.restaurante.model.enums.StatusPedido;
 import br.com.restaurante.repository.PedidoPresencialRepository;
@@ -13,11 +14,6 @@ import java.util.List;
 @Service
 public class PedidoPresencialService {
     private final PedidoPresencialRepository repository;
-
-    @Transactional
-    public PedidoPresencial salvar(PedidoPresencial objeto) {
-        return repository.save(objeto);
-    }
 
     public List<PedidoPresencial> listarTodos() {
         return repository.findAll();
@@ -40,8 +36,33 @@ public class PedidoPresencialService {
         }
 
         existente.setStatus(StatusPedido.PEDIDO_PRONTO);
-        salvar(existente);
+        repository.save(existente);
 
+    }
+
+    @Transactional
+    public PedidoPresencial atualizar(Long id, DadosCadastroPedidoPresencial dto) {
+
+        PedidoPresencial pedido = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido presencial não encontrado"));
+
+        if (pedido.getStatus() == StatusPedido.PEDIDO_PRONTO) {
+            throw new RuntimeException("Pedidos finalizados não podem ser alterados.");
+        }
+
+        if (dto.mesa() != null) {
+            pedido.setMesa(dto.mesa());
+        }
+
+        if (dto.garcom() != null) {
+            pedido.setGarcom(dto.garcom());
+        }
+
+        if (dto.formaPagamento() != null) {
+            pedido.setFormaDePagamento(dto.formaPagamento());
+        }
+
+        return repository.save(pedido);
     }
 
     @Transactional
@@ -49,6 +70,6 @@ public class PedidoPresencialService {
         PedidoPresencial existente = buscarPorId(id);
 
         existente.setStatus(StatusPedido.PEDIDO_CANCELADO);
-        salvar(existente);
+        repository.save(existente);
     }
 }

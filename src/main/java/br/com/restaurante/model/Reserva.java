@@ -1,6 +1,9 @@
 package br.com.restaurante.model;
 
+import br.com.restaurante.dtos.DadosCadastroReserva;
 import br.com.restaurante.model.enums.StatusReserva;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -19,6 +22,7 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Setter
     @NotNull(message = "O valor da reserva é obrigatório")
     @Column(nullable = false)
     private Double valorReserva;
@@ -26,6 +30,7 @@ public class Reserva {
     @Setter
     @NotNull(message = "A data e hora são obrigatórias")
     @Column(nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataHora;
 
     @Setter
@@ -37,6 +42,7 @@ public class Reserva {
     @NotNull(message = "O cliente é obrigatório")
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
+    @JsonIgnore
     private Cliente cliente;
 
     @Setter
@@ -45,11 +51,11 @@ public class Reserva {
     @JoinColumn(name = "mesa_id", nullable = false)
     private Mesa mesa;
 
-    public Reserva(Double valorReserva, LocalDateTime dataHora, StatusReserva status, Cliente cliente, Mesa mesa) {
-        this.valorReserva = valorReserva;
-        this.dataHora = dataHora;
-        this.status = status;
-        this.cliente = cliente;
-        this.mesa = mesa;
+    public Reserva(DadosCadastroReserva dto) {
+        this.valorReserva = dto.valorDaReserva();
+        this.dataHora = dto.dataHora();
+        this.status = dto.status();
+        this.cliente = dto.cliente();
+        this.mesa = dto.mesa();
     }
 }

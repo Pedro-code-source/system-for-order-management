@@ -1,5 +1,6 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroIngrediente;
 import br.com.restaurante.model.Ingrediente;
 import br.com.restaurante.repository.IngredienteRepository;
 import jakarta.transaction.Transactional;
@@ -14,8 +15,12 @@ public class IngredienteService {
     private final IngredienteRepository ingredienteRepository;
 
     @Transactional
-    public Ingrediente salvar(Ingrediente objeto) {
-        return ingredienteRepository.save(objeto);
+    public Ingrediente salvar(DadosCadastroIngrediente dto) {
+        Ingrediente ingrediente = new Ingrediente();
+        ingrediente.setNome(dto.nome());
+        ingrediente.setQuantidade(dto.quantidade());
+
+        return ingredienteRepository.save(ingrediente);
     }
 
     public List<Ingrediente> listarTodos() {
@@ -30,4 +35,17 @@ public class IngredienteService {
     public void deletarPorId(Long id) {
         ingredienteRepository.deleteById(id);
     }
+
+    @Transactional
+    public Ingrediente atualizar(Long id, DadosCadastroIngrediente dto) {
+
+        Ingrediente ingrediente = ingredienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ingrediente não encontrado com o ID: " + id));
+
+        ingrediente.setNome(dto.nome());
+        ingrediente.setQuantidade(dto.quantidade());
+
+        return ingredienteRepository.save(ingrediente);
+    }
+
 }

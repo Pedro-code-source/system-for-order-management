@@ -1,11 +1,9 @@
 package br.com.restaurante.model;
 
-import br.com.restaurante.dtos.DadosEndereco;
+import br.com.restaurante.dtos.DadosCadastroEndereco;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,7 +47,7 @@ public class Endereco {
     @OneToOne(mappedBy = "endereco")
     private Cliente cliente;
 
-    public Endereco(DadosEndereco dados) {
+    public Endereco(DadosCadastroEndereco dados) {
         this.rua = dados.rua();
         this.numero = dados.numero();
         this.bairro = dados.bairro();

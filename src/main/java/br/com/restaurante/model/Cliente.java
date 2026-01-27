@@ -1,6 +1,7 @@
 package br.com.restaurante.model;
 
 import br.com.restaurante.dtos.DadosCadastroCliente;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,12 +32,15 @@ public class Cliente extends Usuario {
     @NotNull(message = "O endereço é obrigatório")
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id", nullable = false)
+    @JsonIgnore
     private Endereco endereco;
 
     @OneToMany(mappedBy = "cliente")
-    private List<Pedido> pedidos = new ArrayList<>();
+    @JsonIgnore
+    private List<PedidoOnline> pedidos = new ArrayList<>();
 
     @OneToMany(mappedBy = "cliente")
+    @JsonIgnore
     private List<Reserva> reservas = new ArrayList<>();
 
     public Cliente(DadosCadastroCliente dados) {

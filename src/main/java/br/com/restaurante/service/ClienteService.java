@@ -1,5 +1,8 @@
 package br.com.restaurante.service;
 
+import br.com.restaurante.dtos.DadosCadastroCliente;
+import br.com.restaurante.dtos.DadosCadastroPedidoOnline;
+import br.com.restaurante.dtos.DadosCadastroReserva;
 import br.com.restaurante.model.*;
 import br.com.restaurante.model.enums.FormaPagamento;
 import br.com.restaurante.model.enums.StatusMesa;
@@ -30,17 +33,24 @@ public class ClienteService {
 
     private final EntregaRepository entregaRepository;
 
-    private final EnderecoRepository enderecoRepository;
+    private final EnderecoService enderecoService;
+
+    private final ItemCardapioService itemCardapioService;
+
+    private final ItemCardapioRepository itemCardapioRepository;
+    private final ReservaService reservaService;
 
     @Transactional
-    public Cliente salvar(Cliente cliente) {
+    public Cliente salvar(DadosCadastroCliente dto) {
 
-        if (clienteRepository.existsByEmail(cliente.getEmail())) {
+        if (clienteRepository.existsByEmail(dto.email())) {
             throw new RuntimeException("E-mail já cadastrado.");
-        } else {
-            enderecoRepository.save(cliente.getEndereco());
-            return clienteRepository.save(cliente);
         }
+        Endereco endereco = enderecoService.salvar(dto.endereco());
+
+        Cliente cliente = new Cliente(dto);
+        cliente.setEndereco(endereco);
+        return clienteRepository.save(cliente);
     }
 
     @Transactional
@@ -67,47 +77,47 @@ public class ClienteService {
     }
 
     @Transactional
-    public Cliente atualizar(Long id, Cliente clienteAtualizado) {
+    public Cliente atualizar(Long id, DadosCadastroCliente clienteAtualizado) {
 
-        Optional<Cliente> clienteComEsseEmail = clienteRepository.findByEmail(clienteAtualizado.getEmail());
+        Cliente cliente = buscarPorId(id);
 
-        if (clienteComEsseEmail.isPresent()) {
-            Cliente donoDoEmail = clienteComEsseEmail.get();
-            if (!donoDoEmail.getId().equals(id)) {
-                throw new RuntimeException("O e-mail passado já pertence a uma outra pessoa, tente outro.");
-            }
+        Optional<Cliente> clienteComEsseEmail = clienteRepository.findByEmail(clienteAtualizado.email());
+        if (clienteComEsseEmail.isPresent() &&
+                !clienteComEsseEmail.get().getId().equals(id)) {
+            throw new RuntimeException("O e-mail já pertence a outro cliente.");
         }
 
-        Cliente clienteExistente = buscarPorId(id);
+        cliente.setNome(clienteAtualizado.nome());
+        cliente.setEmail(clienteAtualizado.email());
+        cliente.setSenha(clienteAtualizado.senha());
+        cliente.setTelefone(clienteAtualizado.telefone());
 
-        clienteExistente.setNome(clienteAtualizado.getNome());
-        clienteExistente.setEmail(clienteAtualizado.getEmail());
-        clienteExistente.setSenha(clienteAtualizado.getSenha());
-        clienteExistente.setTelefone(clienteAtualizado.getTelefone());
 
-        Endereco enderecoExistente = clienteExistente.getEndereco();
-        Endereco enderecoNovo = clienteAtualizado.getEndereco();
-
-        if (enderecoExistente != null && enderecoNovo != null) {
-            enderecoExistente.setRua(enderecoNovo.getRua());
-            enderecoExistente.setBairro(enderecoNovo.getBairro());
-            enderecoExistente.setCep(enderecoNovo.getCep());
-            enderecoExistente.setCidade(enderecoNovo.getCidade());
-            enderecoExistente.setNumero(enderecoNovo.getNumero());
+        if (clienteAtualizado.endereco() != null) {
+            Endereco enderecoNovo = cliente.getEndereco();
+            enderecoNovo.setRua(clienteAtualizado.endereco().rua());
+            enderecoNovo.setBairro(clienteAtualizado.endereco().numero());
+            enderecoNovo.setCep(clienteAtualizado.endereco().bairro());
+            enderecoNovo.setCidade(clienteAtualizado.endereco().cidade());
+            enderecoNovo.setNumero(clienteAtualizado.endereco().cep());
         }
 
-        return clienteRepository.save(clienteExistente);
+        return clienteRepository.save(cliente);
     }
 
     @Transactional
-    public void fazerReserva(Cliente cliente, Mesa mesa, LocalDateTime dataHora) {
+    public void fazerReserva(Long clienteId, DadosCadastroReserva dto) {
 
-        if (dataHora.isBefore(LocalDateTime.now())) {
+        Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(()-> new RuntimeException("Cliente não encontrado."));
+
+        Mesa mesa = mesaRepository.findById(dto.mesaId())
+                .orElseThrow(() -> new RuntimeException("Mesa não encontrada"));
+        if (dto.dataHora().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Não é possível agendar reservas para o passado.");
         }
 
-        if (mesa.getStatus() == StatusMesa.LIVRE) {
-            Reserva reserva = new Reserva(TAXA_FIXA, dataHora, StatusReserva.CONFIRMADA, cliente, mesa);
+        if (mesa.getStatus().equals(StatusMesa.LIVRE)) {
+            Reserva reserva = new Reserva(dto);
 
             reservaRepository.save(reserva);
 
@@ -119,17 +129,21 @@ public class ClienteService {
     }
 
     @Transactional
-    public void fazerPedidoOnline(Cliente cliente, List<ItemCardapio> itens, FormaPagamento formaPagamento) {
+    public void fazerPedidoOnline(DadosCadastroPedidoOnline dto) {
 
-        if (itens.isEmpty()) {
-            throw new RuntimeException("Não é possível fazer um pedido sem itens.");
+        Cliente cliente = buscarPorId(dto.clienteId());
+
+        List<ItemCardapio> itens = itemCardapioRepository.findAllById(dto.itensIds());
+
+        if (itens.isEmpty()){
+            throw new RuntimeException("Pedido sem itens.");
         }
 
         Double total = itens.stream().mapToDouble(ItemCardapio::getPreco).sum();
 
-        Entrega entrega = new Entrega(cliente.getEndereco());
+        Entrega entrega = entregaRepository.save(new Entrega(cliente.getEndereco()));
 
-        entregaRepository.save(entrega);
+
 
         PedidoOnline pedidoOnline = new PedidoOnline();
         pedidoOnline.setCliente(cliente);
@@ -137,23 +151,27 @@ public class ClienteService {
         pedidoOnline.setItens(itens);
         pedidoOnline.setValorFinal(total);
         pedidoOnline.setStatus(StatusPedido.PEDIDO_EM_PREPARO);
-        pedidoOnline.setFormaDePagamento(formaPagamento);
+        pedidoOnline.setFormaDePagamento(dto.formaPagamento());
         pedidoOnline.setDataHora(LocalDateTime.now());
 
         pedidoOnlineRepository.save(pedidoOnline);
     }
 
     @Transactional
-    public void cancelarReserva(Reserva reserva) {
+    public void cancelarReserva(Long id) {
+
+        Reserva reserva = reservaService.buscarPorId(id);
 
         if (reserva.getStatus() != StatusReserva.CONFIRMADA) {
             throw new RuntimeException("A reserva não pode ser cancelada, pois ela não está ativa ou confirmada.");
-        } else {
-            reserva.setStatus(StatusReserva.CANCELADA);
-            reserva.getMesa().setStatus(StatusMesa.LIVRE);
-            reservaRepository.save(reserva);
-            mesaRepository.save(reserva.getMesa());
         }
 
+        reserva.setStatus(StatusReserva.CANCELADA);
+
+        Mesa mesa = reserva.getMesa();
+        mesa.setStatus(StatusMesa.LIVRE);
+
+        reservaRepository.save(reserva);
+        mesaRepository.save(mesa);
     }
 }

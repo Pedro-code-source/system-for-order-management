@@ -2,6 +2,7 @@ package br.com.restaurante.model;
 
 import br.com.restaurante.dtos.DadosCadastroItem;
 import br.com.restaurante.model.enums.CategoriaItem;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -39,6 +40,7 @@ public class ItemCardapio {
     @Setter
     @NotNull(message = "A categoria é obrigatória")
     @Column(nullable = false)
+    @JsonIgnore
     private CategoriaItem categoria;
 
     @Setter
