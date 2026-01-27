@@ -1,6 +1,7 @@
 package br.com.restaurante.controller;
 
 import br.com.restaurante.dtos.DadosCadastroGarcom;
+import br.com.restaurante.dtos.DadosCadastroPedidoPresencial;
 import br.com.restaurante.dtos.DadosListagemGarcom;
 import br.com.restaurante.model.Garcom;
 import br.com.restaurante.service.GarcomService;
@@ -67,4 +68,17 @@ public class GarcomController {
         garcomService.deletarPorId(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping
+    public ResponseEntity<Void> registrarPedidoPresencial(@RequestBody @Valid DadosCadastroPedidoPresencial dto){
+        garcomService.registrarPedidoPresencial(dto);
+        return ResponseEntity.status(201).build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> fecharPedido(@PathVariable Long id){
+        garcomService.fecharPedido(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
