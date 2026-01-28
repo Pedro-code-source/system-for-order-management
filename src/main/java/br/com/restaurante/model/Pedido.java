@@ -33,19 +33,20 @@ public abstract class Pedido {
     private LocalDateTime dataHora;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "O status do pedido é obrigatório")
     @Column(nullable = false)
     private StatusPedido status;
 
+    @Enumerated(EnumType.STRING)
     @Setter
     @NotNull(message = "A forma de pagamento é obrigatória")
     @Column(nullable = false)
     private FormaPagamento formaDePagamento;
 
     @Setter
-    @NotNull(message = "O cliente é obrigatório")
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "cliente_id", nullable = true)
     private Cliente cliente;
 
     @Setter

@@ -16,6 +16,4 @@ public class PedidoOnline extends Pedido {
     @JoinColumn(name = "entrega_id", nullable = false)
     private Entrega entrega;
 
-
-
 }

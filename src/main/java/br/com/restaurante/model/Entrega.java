@@ -1,6 +1,5 @@
 package br.com.restaurante.model;
 
-import br.com.restaurante.model.enums.StatusPedido;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -29,13 +28,4 @@ public class Entrega {
     public Entrega(Endereco endereco) {
         this.endereco = endereco;
     }
-
-    public void iniciarEntrega (PedidoOnline pedidoOnline){
-        pedidoOnline.setStatus(StatusPedido.PEDIDO_PRONTO);
-    }
-
-    public void finalizarEntrega (PedidoOnline pedidoOnline){
-        pedidoOnline.setStatus(StatusPedido.PEDIDO_ENTREGUE);
-    }
-
 }

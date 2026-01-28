@@ -35,6 +35,7 @@ public class ItemCardapio {
     @Column(nullable = false)
     private String descricao;
 
+    @Enumerated(EnumType.STRING)
     @Setter
     @NotNull(message = "A categoria é obrigatória")
     @Column(nullable = false)

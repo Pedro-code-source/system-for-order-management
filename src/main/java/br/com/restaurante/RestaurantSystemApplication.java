@@ -21,7 +21,6 @@ import java.util.*;
 @SpringBootApplication
 public class RestaurantSystemApplication implements CommandLineRunner {
 
-    // --- Services ---
     @Autowired private ClienteService clienteService;
     @Autowired private ItemCardapioService itemCardapioService;
     @Autowired private MesaService mesaService;
@@ -30,7 +29,6 @@ public class RestaurantSystemApplication implements CommandLineRunner {
     @Autowired private MovimentacaoService movimentacaoService;
     @Autowired private IngredienteService ingredienteService;
 
-    // --- Repositories ---
     @Autowired private ClienteRepository clienteRepository;
     @Autowired private AdministradorRepository administradorRepository;
     @Autowired private GarcomRepository garcomRepository;
@@ -45,6 +43,25 @@ public class RestaurantSystemApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
+        Administrador administrador = new Administrador("admin@gmail.com", "admin123");
+        administradorService.salvar(administrador);
+
+        Garcom garcom = new Garcom("garcom@gmail.com", "garcom123", "Garçom");
+        garcomService.salvar(garcom);
+
+        Mesa mesa1 = new Mesa(1, 10, StatusMesa.LIVRE);
+        Mesa mesa2 = new Mesa(2, 10, StatusMesa.LIVRE);
+        Mesa mesa3 = new Mesa(3, 10, StatusMesa.LIVRE);
+        Mesa mesa4 = new Mesa(4, 10, StatusMesa.LIVRE);
+        Mesa mesa5 = new Mesa(5, 10, StatusMesa.LIVRE);
+
+        mesaService.salvar(mesa1);
+        mesaService.salvar(mesa2);
+        mesaService.salvar(mesa3);
+        mesaService.salvar(mesa4);
+        mesaService.salvar(mesa5);
+
         Scanner scanner = new Scanner(System.in);
         int opcao = 0;
 
@@ -156,11 +173,11 @@ public class RestaurantSystemApplication implements CommandLineRunner {
         System.out.println("Bem-vindo(a), " + cliente.getNome());
 
         int opcao = 0;
-        while (opcao != 4) { // Alterado para 4 opções
+        while (opcao != 4) {
             System.out.println("\n--- MENU CLIENTE ---");
             System.out.println("1 - Fazer Pedido Online");
             System.out.println("2 - Fazer Reserva");
-            System.out.println("3 - Cancelar Reserva"); // <--- NOVO
+            System.out.println("3 - Cancelar Reserva");
             System.out.println("4 - Logout");
             System.out.print("Escolha: ");
             opcao = lerInteiro(scanner);
@@ -168,7 +185,7 @@ public class RestaurantSystemApplication implements CommandLineRunner {
             switch (opcao) {
                 case 1 -> fluxoPedidoOnline(scanner, cliente);
                 case 2 -> fluxoReserva(scanner, cliente);
-                case 3 -> fluxoCancelarReservaCliente(scanner, cliente); // <--- NOVO
+                case 3 -> fluxoCancelarReservaCliente(scanner, cliente);
                 case 4 -> System.out.println("Fazendo logout...");
                 default -> System.out.println("Opção inválida.");
             }
@@ -300,7 +317,7 @@ public class RestaurantSystemApplication implements CommandLineRunner {
             System.out.println("1 - Cadastrar Ingredientes");
             System.out.println("2 - Controle de Estoque");
             System.out.println("3 - Cadastrar Item no Cardápio");
-            System.out.println("4 - Cancelar Qualquer Reserva"); // <--- NOVO
+            System.out.println("4 - Cancelar Qualquer Reserva");
             System.out.println("5 - Logout");
             System.out.print("Escolha: ");
             opcao = lerInteiro(scanner);
@@ -316,7 +333,7 @@ public class RestaurantSystemApplication implements CommandLineRunner {
                 }
                 case 2 -> controleEstoque(scanner);
                 case 3 -> cadastrarPrato(scanner);
-                case 4 -> fluxoCancelarReservaAdmin(scanner); // <--- NOVO
+                case 4 -> fluxoCancelarReservaAdmin(scanner);
                 case 5 -> System.out.println("Saindo do Admin...");
                 default -> System.out.println("Inválido.");
             }
@@ -346,23 +363,47 @@ public class RestaurantSystemApplication implements CommandLineRunner {
     }
 
     private void cadastrarPrato(Scanner scanner) {
+        System.out.println("\n--- NOVO PRATO/ITEM ---");
         System.out.print("Nome do Prato: ");
         String nome = scanner.nextLine();
-
         System.out.print("Preço: ");
         double preco = scanner.nextDouble();
-        scanner.nextLine();
+
+        List<Ingrediente> ingredientesDisponiveis = ingredienteService.listarTodos();
+
+        if (ingredientesDisponiveis.isEmpty()) {
+            System.out.println("ERRO: Não há ingredientes cadastrados no sistema.");
+            System.out.println("Cadastre ingredientes na Opção 1 antes de criar pratos.");
+            return;
+        }
 
         Map<String, Integer> receita = new HashMap<>();
         System.out.print("Quantos ingredientes leva? ");
         int qtdIng = lerInteiro(scanner);
 
         for (int i = 0; i < qtdIng; i++) {
-            System.out.print("Nome do Ingrediente " + (i+1) + ": ");
-            String nomeIng = scanner.nextLine();
-            System.out.print("Quantidade (g): ");
-            int qtd = lerInteiro(scanner);
-            receita.put(nomeIng, qtd);
+            System.out.println("\n--- Escolha o Ingrediente " + (i+1) + " ---");
+
+            for (Ingrediente ing : ingredientesDisponiveis) {
+                System.out.println("ID: " + ing.getId() + " - " + ing.getNome() + " (Estoque atual: " + ing.getQuantidade() + "g)");
+            }
+
+            System.out.print("Digite o ID do ingrediente acima: ");
+            long idEscolhido = scanner.nextLong();
+
+            Optional<Ingrediente> ingredienteOpt = ingredientesDisponiveis.stream()
+                    .filter(ing -> ing.getId() == idEscolhido)
+                    .findFirst();
+
+            if (ingredienteOpt.isPresent()) {
+                System.out.print("Quantidade necessária para a receita (g): ");
+                int qtd = lerInteiro(scanner);
+
+                receita.put(ingredienteOpt.get().getNome(), qtd);
+                System.out.println("Ingrediente adicionado à receita!");
+            } else {
+                System.out.println("ID Inválido! Esse ingrediente não foi adicionado.");
+            }
         }
 
         System.out.print("Descrição: ");
@@ -370,7 +411,7 @@ public class RestaurantSystemApplication implements CommandLineRunner {
         System.out.print("URL da Foto: ");
         String url = scanner.nextLine();
 
-        System.out.println("Categoria (1-Comida, 2-Bebida, 3-Sobremesa): ");
+        System.out.print("Categoria (1-Comida, 2-Bebida, 3-Sobremesa): ");
         int catOpt = lerInteiro(scanner);
         CategoriaItem categoria = switch (catOpt) {
             case 2 -> CategoriaItem.BEBIDA;
@@ -379,7 +420,7 @@ public class RestaurantSystemApplication implements CommandLineRunner {
         };
 
         administradorService.cadastrarItemCardapio(nome, preco, receita, desc, categoria, url);
-        System.out.println("Item cadastrado!");
+        System.out.println("Item cadastrado com sucesso!");
     }
 
     private void fluxoCancelarReservaAdmin(Scanner scanner) {
@@ -402,7 +443,6 @@ public class RestaurantSystemApplication implements CommandLineRunner {
         scanner.nextLine();
 
         try {
-            // Chama o método que criamos no AdministradorService
             administradorService.cancelarReserva(idReserva);
             System.out.println("Reserva cancelada pelo administrador!");
         } catch (Exception e) {
@@ -505,7 +545,7 @@ public class RestaurantSystemApplication implements CommandLineRunner {
 
                     try {
                         garcomService.registrarPedidoPresencial(garcom.getId(), mesa.getId(), itensPedido, fp);
-                        System.out.println("Pedido registrado com sucesso! Mesa " + numMesa + " agora está OCUPADA.");
+                        System.out.println("Pedido registrado com sucesso!");
                     } catch (Exception e) {
                         System.out.println("Erro ao registrar: " + e.getMessage());
                     }

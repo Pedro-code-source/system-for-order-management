@@ -25,6 +25,7 @@ public class MovimentacaoDeEstoque {
     private LocalDateTime dataCriacao;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "O tipo de movimentação é obrigatório")
     @Column(nullable = false)
     private TipoMovimentacao tipoMovimentacao;

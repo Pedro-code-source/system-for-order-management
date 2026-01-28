@@ -29,6 +29,7 @@ public class Reserva {
     private LocalDateTime dataHora;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "O status da reserva é obrigatório")
     @Column(nullable = false)
     private StatusReserva status;

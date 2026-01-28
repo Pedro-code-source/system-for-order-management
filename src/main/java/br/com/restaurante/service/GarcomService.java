@@ -4,10 +4,7 @@ import br.com.restaurante.model.*;
 import br.com.restaurante.model.enums.FormaPagamento;
 import br.com.restaurante.model.enums.StatusMesa;
 import br.com.restaurante.model.enums.StatusPedido;
-import br.com.restaurante.repository.ClienteRepository;
-import br.com.restaurante.repository.GarcomRepository;
-import br.com.restaurante.repository.MesaRepository;
-import br.com.restaurante.repository.PedidoPresencialRepository;
+import br.com.restaurante.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +18,9 @@ import java.util.Optional;
 public class GarcomService {
 
     private final PedidoPresencialRepository pedidoPresencialRepository;
-    private final ClienteRepository clienteRepository;
     private final GarcomRepository garcomRepository;
     private final MesaRepository mesaRepository;
+    private final ItemCardapioRepository itemCardapioRepository;
 
     @Transactional
     public Garcom salvar(Garcom garcom) {
@@ -63,14 +60,15 @@ public class GarcomService {
     }
 
     @Transactional
-    public void registrarPedidoPresencial(Long garcomId, Long mesaId, List<ItemCardapio> itens, FormaPagamento formaPagamento) {
+    public void registrarPedidoPresencial(Long garcomId, Long mesaId, List<ItemCardapio> itensDetached, FormaPagamento formaPagamento) {
 
-        Garcom garcom = garcomRepository.findById(garcomId).orElseThrow(() -> new RuntimeException("Garçom não encontrado."));
-        Mesa mesa = mesaRepository.findById(mesaId).orElseThrow(() -> new RuntimeException("Mesa não encontrada."));
+        Garcom garcom = garcomRepository.findById(garcomId)
+                .orElseThrow(() -> new RuntimeException("Garçom não encontrado."));
 
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa não encontrada."));
 
-
-        if (itens.isEmpty()) {
+        if (itensDetached.isEmpty()) {
             throw new RuntimeException("Não é possível registrar um pedido sem itens.");
         }
 
@@ -78,14 +76,22 @@ public class GarcomService {
             throw new RuntimeException("Esta mesa já está ocupada.");
         }
 
-        Double valorTotal = itens.stream().mapToDouble(ItemCardapio::getPreco).sum();
+        List<Long> idsDosItens = itensDetached.stream()
+                .map(ItemCardapio::getId)
+                .toList();
+
+        List<ItemCardapio> itensGerenciados = itemCardapioRepository.findAllById(idsDosItens);
+
+        Double valorTotal = itensGerenciados.stream().mapToDouble(ItemCardapio::getPreco).sum();
 
         PedidoPresencial pedidoPresencial = new PedidoPresencial();
 
         pedidoPresencial.setMesa(mesa);
         pedidoPresencial.setGarcom(garcom);
         pedidoPresencial.setStatus(StatusPedido.PEDIDO_EM_PREPARO);
-        pedidoPresencial.setItens(itens);
+
+        pedidoPresencial.setItens(itensGerenciados);
+
         pedidoPresencial.setDataHora(LocalDateTime.now());
         pedidoPresencial.setFormaDePagamento(formaPagamento);
         pedidoPresencial.setValorFinal(valorTotal);
