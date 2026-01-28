@@ -20,7 +20,7 @@ import java.util.List;
 public class AdministradorController {
 
     private final AdministradorService administradorService;
-    private final ReservaService reservaService; // <--- Injetamos para cancelar reservas
+    private final ReservaService reservaService;
 
     @PostMapping
     public ResponseEntity<DadosListagemAdmin> cadastrar(@RequestBody @Valid DadosCadastroAdmin dados, UriComponentsBuilder uriBuilder) {

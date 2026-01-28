@@ -34,6 +34,5 @@ public class Ingrediente {
     public Ingrediente(DadosCadastroIngrediente dados) {
         this.nome = dados.nome();
         this.quantidade = dados.quantidade();
-        this.unidadeMedida = dados.unidadeMedida();
     }
 }

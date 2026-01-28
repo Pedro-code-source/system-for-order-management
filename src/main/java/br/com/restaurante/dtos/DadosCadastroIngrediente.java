@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record DadosCadastroIngrediente(
         @NotBlank String nome,
-        @NotNull Integer quantidade,
-        String unidadeMedida
+        @NotNull Integer quantidade
 ) {
 }
