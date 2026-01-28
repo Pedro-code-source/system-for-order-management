@@ -7,7 +7,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -17,33 +16,17 @@ public class EnderecoService {
 
     @Transactional
     public Endereco salvar(DadosCadastroEndereco dto) {
-
         Endereco endereco = new Endereco(dto);
-
         return enderecoRepository.save(endereco);
     }
 
-    @Transactional
-    public void deletarPorId(Long id) {
-        if (!enderecoRepository.existsById(id)) {
-            throw new RuntimeException("Endereço não encontrado para deletar.");
-        }
-        enderecoRepository.deleteById(id);
-    }
-
-    public List<Endereco> listarTodos() {
-        return enderecoRepository.findAll();
-    }
-
     public Endereco buscarPorId(Long id) {
-        return enderecoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Endereço não encontrado com ID: " + id));
+        return enderecoRepository.findById(id).orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
     }
 
     @Transactional
     public Endereco atualizar(Long id, Endereco enderecoAtualizado) {
         Endereco enderecoExistente = buscarPorId(id);
-
 
         enderecoExistente.setRua(enderecoAtualizado.getRua());
         enderecoExistente.setNumero(enderecoAtualizado.getNumero());

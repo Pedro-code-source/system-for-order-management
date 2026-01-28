@@ -1,6 +1,5 @@
 package br.com.restaurante.model;
 
-import br.com.restaurante.model.enums.StatusPedido;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table (name = "entregas")
+@Table(name = "entregas")
 public class Entrega {
 
     @Id
@@ -32,13 +31,4 @@ public class Entrega {
     public Entrega(Endereco endereco) {
         this.endereco = endereco;
     }
-
-    public void iniciarEntrega (PedidoOnline pedidoOnline){
-        pedidoOnline.setStatus(StatusPedido.PEDIDO_PRONTO);
-    }
-
-    public void finalizarEntrega (PedidoOnline pedidoOnline){
-        pedidoOnline.setStatus(StatusPedido.PEDIDO_ENTREGUE);
-    }
-
 }

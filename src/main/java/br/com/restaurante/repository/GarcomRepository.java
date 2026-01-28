@@ -10,7 +10,4 @@ public interface GarcomRepository extends JpaRepository <Garcom, Long> {
 
     boolean existsByEmail(String email);
 
-    boolean existsBySenha(String senha);
-
-    Optional<Garcom> findByEmail(String email);
 }

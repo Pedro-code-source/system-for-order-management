@@ -1,7 +1,6 @@
 package br.com.restaurante.model;
 
 import br.com.restaurante.dtos.DadosCadastroEndereco;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -42,10 +41,6 @@ public class Endereco {
     @NotBlank(message = "O CEP é obrigatório")
     @Column(nullable = false)
     private String cep;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "endereco")
-    private Cliente cliente;
 
     public Endereco(DadosCadastroEndereco dados) {
         this.rua = dados.rua();

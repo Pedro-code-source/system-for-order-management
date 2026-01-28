@@ -10,12 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @NoArgsConstructor
 @Getter
 @Entity
-@Table (name = "itens")
+@Table(name = "itens")
 public class ItemCardapio {
 
     @Id
@@ -45,12 +43,6 @@ public class ItemCardapio {
 
     @Setter
     private String urlFoto;
-
-    @ManyToMany(mappedBy = "itens")
-    private List<Pedido> pedidos;
-
-    @ManyToMany(mappedBy = "itens")
-    private List<Ingrediente> ingredientes;
 
     public ItemCardapio(DadosCadastroItem dados) {
         this.nome = dados.nome();

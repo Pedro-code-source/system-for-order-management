@@ -1,6 +1,5 @@
 package br.com.restaurante.dtos;
 
-import br.com.restaurante.model.Entrega;
 import br.com.restaurante.model.enums.FormaPagamento;
 import br.com.restaurante.model.enums.StatusPedido;
 

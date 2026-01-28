@@ -1,9 +1,7 @@
 package br.com.restaurante.controller;
 
 import br.com.restaurante.dtos.*;
-import br.com.restaurante.model.Cliente;
 import br.com.restaurante.model.Reserva;
-import br.com.restaurante.service.ClienteService;
 import br.com.restaurante.service.ReservaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +19,13 @@ public class ReservaController {
     @Autowired
     private ReservaService reservaService;
 
-    @Autowired
-    private ClienteService clienteService;
+    @PostMapping
+    public ResponseEntity<DadosListagemReserva> cadastrar(@RequestBody @Valid DadosCadastroReserva dados, UriComponentsBuilder uriBuilder) {
+        Reserva reserva = reservaService.cadastrar(dados);
 
+        URI uri = uriBuilder.path("/reservas/{id}").buildAndExpand(reserva.getId()).toUri();
+        return ResponseEntity.created(uri).body(new DadosListagemReserva(reserva));
+    }
 
     @GetMapping
     public ResponseEntity<List<DadosListagemReserva>> listar() {
@@ -42,8 +44,7 @@ public class ReservaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DadosListagemReserva> atualizar(@PathVariable Long id, @RequestBody @Valid DadosCadastroReserva dados
-    ) {
+    public ResponseEntity<DadosListagemReserva> atualizar(@PathVariable Long id, @RequestBody @Valid DadosCadastroReserva dados) {
         Reserva reserva = reservaService.atualizar(id, dados);
         return ResponseEntity.ok(new DadosListagemReserva(reserva));
     }
@@ -54,16 +55,9 @@ public class ReservaController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/fazerReserva/{idCliente}")
-    public ResponseEntity<DadosListagemReserva> fazerReserva(@PathVariable Long idCliente, @RequestBody DadosCadastroReserva dto){
-        clienteService.fazerReserva(idCliente, dto);
-        return ResponseEntity.status(201).build();
-    }
-
-    @DeleteMapping("/cancelarReserva/{reservaId}")
-    public ResponseEntity<Void> cancelarReserva (@PathVariable Long reservaId){
-        clienteService.cancelarReserva(reservaId);
+    @DeleteMapping("/{id}/cancelar")
+    public ResponseEntity<Void> cancelar(@PathVariable Long id) {
+        reservaService.cancelar(id);
         return ResponseEntity.noContent().build();
     }
-
 }

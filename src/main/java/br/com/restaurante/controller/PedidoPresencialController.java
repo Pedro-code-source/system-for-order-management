@@ -1,58 +1,48 @@
 package br.com.restaurante.controller;
 
-import br.com.restaurante.dtos.DadosCadastroPedidoOnline;
 import br.com.restaurante.dtos.DadosCadastroPedidoPresencial;
-import br.com.restaurante.dtos.DadosListagemPedidoOnline;
 import br.com.restaurante.dtos.DadosListagemPedidoPresencial;
-import br.com.restaurante.model.PedidoOnline;
 import br.com.restaurante.model.PedidoPresencial;
 import br.com.restaurante.service.GarcomService;
 import br.com.restaurante.service.PedidoPresencialService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/pedidosPresenciais")
+@RequiredArgsConstructor
 public class PedidoPresencialController {
 
-    @Autowired
-    private PedidoPresencialService pedidoPresencialService;
+    private final PedidoPresencialService pedidoPresencialService;
+    private final GarcomService garcomService;
 
-    @Autowired
-    private GarcomService garcomService;
-
-    @PostMapping("/fazerPedidoPresencial")
-    public ResponseEntity<DadosCadastroPedidoPresencial> fazerPedidoOnline(@RequestBody DadosCadastroPedidoPresencial dto){
-        garcomService.registrarPedidoPresencial(dto);
-        return ResponseEntity.status(201).build();
+    @PostMapping
+    public ResponseEntity<DadosListagemPedidoPresencial> cadastrar(@RequestBody @Valid DadosCadastroPedidoPresencial dto, UriComponentsBuilder uriBuilder){
+        PedidoPresencial pedido = garcomService.registrarPedidoPresencial(dto);
+        URI uri = uriBuilder.path("/pedidosPresenciais/{id}").buildAndExpand(pedido.getId()).toUri();
+        return ResponseEntity.created(uri).body(new DadosListagemPedidoPresencial(pedido));
     }
-
 
     @GetMapping
     public ResponseEntity<List<DadosListagemPedidoPresencial>> listar() {
         List<DadosListagemPedidoPresencial> lista = pedidoPresencialService.listarTodos()
-                .stream()
-                .map(DadosListagemPedidoPresencial::new)
-                .toList();
-
+                .stream().map(DadosListagemPedidoPresencial::new).toList();
         return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DadosListagemPedidoPresencial> buscarPorId(@PathVariable Long id) {
-        PedidoPresencial pedido = pedidoPresencialService.buscarPorId(id);
-        return ResponseEntity.ok(new DadosListagemPedidoPresencial(pedido));
+        return ResponseEntity.ok(new DadosListagemPedidoPresencial(pedidoPresencialService.buscarPorId(id)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DadosListagemPedidoPresencial> atualizar(
-            @PathVariable Long id,
-            @RequestBody @Valid DadosCadastroPedidoPresencial dto
-    ) {
+    public ResponseEntity<DadosListagemPedidoPresencial> atualizar(@PathVariable Long id, @RequestBody @Valid DadosCadastroPedidoPresencial dto) {
         PedidoPresencial pedido = pedidoPresencialService.atualizar(id, dto);
         return ResponseEntity.ok(new DadosListagemPedidoPresencial(pedido));
     }
@@ -63,7 +53,15 @@ public class PedidoPresencialController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/finalizar")
+    public ResponseEntity<Void> finalizarPedido(@PathVariable Long id) {
+        pedidoPresencialService.finalizarPedido(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/cancelar")
+    public ResponseEntity<Void> cancelarPedido(@PathVariable Long id) {
+        pedidoPresencialService.cancelarPedido(id);
+        return ResponseEntity.noContent().build();
+    }
 }
-
-
-

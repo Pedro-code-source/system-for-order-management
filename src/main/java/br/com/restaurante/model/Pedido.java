@@ -43,9 +43,9 @@ public abstract class Pedido {
     private FormaPagamento formaDePagamento;
 
     @Setter
-    @NotNull(message = "O cliente é obrigatório")
+
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "cliente_id", nullable = true)
     private Cliente cliente;
 
     @Setter
@@ -55,30 +55,4 @@ public abstract class Pedido {
             joinColumns = @JoinColumn(name = "pedido_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<ItemCardapio> itens;
-
-
-
-
-    public void calcularValorFinal(){
-        valorFinal = itens.stream().mapToDouble(ItemCardapio::getPreco).sum();
-    }
-
-    public void adicionarItem(ItemCardapio item){
-        itens.add(item);
-        calcularValorFinal();
-    }
-
-    public void removerItem(ItemCardapio item){
-        itens.remove(item);
-        calcularValorFinal();
-    }
-
-
-    public Pedido(Double valorFinal, StatusPedido status, FormaPagamento formaDePagamento, List<ItemCardapio> itens, LocalDateTime dataHora) {
-        this.valorFinal = valorFinal;
-        this.status = status;
-        this.formaDePagamento = formaDePagamento;
-        this.itens = itens;
-        this.dataHora = dataHora;
-    }
 }

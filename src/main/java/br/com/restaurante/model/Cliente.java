@@ -9,9 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @NoArgsConstructor
 @Entity
 @Getter
@@ -35,19 +32,9 @@ public class Cliente extends Usuario {
     @JsonIgnore
     private Endereco endereco;
 
-    @OneToMany(mappedBy = "cliente")
-    @JsonIgnore
-    private List<PedidoOnline> pedidos = new ArrayList<>();
-
-    @OneToMany(mappedBy = "cliente")
-    @JsonIgnore
-    private List<Reserva> reservas = new ArrayList<>();
-
     public Cliente(DadosCadastroCliente dados) {
+        super(dados.email(), dados.senha());
         this.nome = dados.nome();
-        this.setEmail(dados.email());
         this.telefone = dados.telefone();
-        this.setSenha(dados.senha());
-        this.endereco = new Endereco(dados.endereco());
     }
 }

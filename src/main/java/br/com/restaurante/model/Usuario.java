@@ -26,7 +26,7 @@ public abstract class Usuario {
     @Column(nullable = false)
     private String senha;
 
-    public Usuario(String email, String senha) {
+    protected Usuario(String email, String senha) {
         this.email = email;
         this.senha = senha;
     }

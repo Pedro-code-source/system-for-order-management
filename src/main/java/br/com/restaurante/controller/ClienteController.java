@@ -11,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
@@ -19,8 +20,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<DadosListagemCliente> cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriComponentsBuilder uriBuilder
-    ) {
+    public ResponseEntity<DadosListagemCliente> cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriComponentsBuilder uriBuilder) {
         Cliente clienteSalvo = clienteService.salvar(dados);
 
         URI uri = uriBuilder
@@ -61,24 +61,6 @@ public class ClienteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         clienteService.deletarPorId(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/fazerPedidoOnline")
-    public ResponseEntity<DadosListagemPedidoOnline> fazerPedidoOnline( @RequestBody DadosCadastroPedidoOnline dto){
-        clienteService.fazerPedidoOnline(dto);
-        return ResponseEntity.status(201).build();
-    }
-
-    @PostMapping("/fazerReserva/{idCliente}")
-    public ResponseEntity<DadosListagemReserva> fazerReserva(@PathVariable Long idCliente, @RequestBody DadosCadastroReserva dto){
-        clienteService.fazerReserva(idCliente, dto);
-        return ResponseEntity.status(201).build();
-    }
-
-    @DeleteMapping("/cancelarReserva/{reservaId}")
-    public ResponseEntity<Void> cancelarReserva (@PathVariable Long reservaId){
-        clienteService.cancelarReserva(reservaId);
         return ResponseEntity.noContent().build();
     }
 }

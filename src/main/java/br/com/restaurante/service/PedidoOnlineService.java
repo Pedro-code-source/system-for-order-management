@@ -1,24 +1,52 @@
 package br.com.restaurante.service;
 
 import br.com.restaurante.dtos.DadosCadastroPedidoOnline;
-import br.com.restaurante.model.Endereco;
-import br.com.restaurante.model.Entrega;
-import br.com.restaurante.model.PedidoOnline;
+import br.com.restaurante.model.*;
 import br.com.restaurante.model.enums.StatusPedido;
-import br.com.restaurante.repository.EnderecoRepository;
-import br.com.restaurante.repository.PedidoOnlineRepository;
+import br.com.restaurante.repository.*;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class PedidoOnlineService {
-    private final PedidoOnlineRepository repository;
 
+    private final PedidoOnlineRepository repository;
     private final EnderecoRepository enderecoRepository;
+    private final ClienteRepository clienteRepository;
+    private final ItemCardapioRepository itemRepository;
+    private final EntregaRepository entregaRepository;
+
+    @Transactional
+    public PedidoOnline cadastrar(DadosCadastroPedidoOnline dto) {
+        Cliente cliente = clienteRepository.findById(dto.clienteId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
+
+        List<ItemCardapio> itens = itemRepository.findAllById(dto.itensIds());
+        if (itens.isEmpty()){
+            throw new RuntimeException("Pedido sem itens.");
+        }
+
+        Double total = itens.stream().mapToDouble(ItemCardapio::getPreco).sum();
+
+        Entrega entrega = new Entrega(cliente.getEndereco());
+        entregaRepository.save(entrega);
+
+        PedidoOnline pedidoOnline = new PedidoOnline();
+        pedidoOnline.setCliente(cliente);
+        pedidoOnline.setEntrega(entrega);
+        pedidoOnline.setItens(itens);
+        pedidoOnline.setValorFinal(total);
+        pedidoOnline.setStatus(StatusPedido.PEDIDO_EM_PREPARO);
+        pedidoOnline.setFormaDePagamento(dto.formaPagamento());
+        pedidoOnline.setDataHora(LocalDateTime.now());
+
+        return repository.save(pedidoOnline);
+    }
 
     @Transactional
     public PedidoOnline salvar(PedidoOnline objeto) {
@@ -42,29 +70,23 @@ public class PedidoOnlineService {
 
     @Transactional
     public PedidoOnline atualizar(Long id, DadosCadastroPedidoOnline dto) {
-
         PedidoOnline pedido = buscarPorId(id);
 
         if (pedido.getStatus() == StatusPedido.PEDIDO_CANCELADO) {
             throw new RuntimeException("Pedidos cancelados não podem ser alterados.");
         }
-
         if (dto.formaPagamento() != null) {
             pedido.setFormaDePagamento(dto.formaPagamento());
         }
-
         if (dto.status() != null) {
             pedido.setStatus(dto.status());
         }
-
         return repository.save(pedido);
     }
-
 
     @Transactional
     public void finalizarPedido(Long id){
         PedidoOnline pedido = buscarPorId(id);
-
         if (pedido.getItens().isEmpty()){
             throw new RuntimeException("Não é possível finalizar um pedido vazio");
         }
@@ -75,7 +97,6 @@ public class PedidoOnlineService {
     @Transactional
     public void cancelarPedido(Long id){
         PedidoOnline existente = buscarPorId(id);
-
         existente.setStatus(StatusPedido.PEDIDO_CANCELADO);
         salvar(existente);
     }
@@ -84,10 +105,9 @@ public class PedidoOnlineService {
     public void confirmarEndereco(Long id) {
         PedidoOnline pedido = buscarPorId(id);
         Entrega entrega = pedido.getEntrega();
+
         Endereco enderecoDoPerfil = entrega.getEndereco();
-
         Endereco enderecoSnapshot = new Endereco();
-
         enderecoSnapshot.setRua(enderecoDoPerfil.getRua());
         enderecoSnapshot.setBairro(enderecoDoPerfil.getBairro());
         enderecoSnapshot.setCep(enderecoDoPerfil.getCep());
@@ -95,9 +115,6 @@ public class PedidoOnlineService {
         enderecoSnapshot.setNumero(enderecoDoPerfil.getNumero());
 
         enderecoRepository.save(enderecoSnapshot);
-
         entrega.setEndereco(enderecoSnapshot);
     }
-
 }
-

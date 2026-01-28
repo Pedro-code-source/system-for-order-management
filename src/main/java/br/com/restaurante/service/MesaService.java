@@ -34,34 +34,4 @@ public class MesaService {
         mesaRepository.deleteById(id);
     }
 
-    @Transactional
-    public void ocupar(Long id){
-        Mesa existente = buscarPorId(id);
-
-        existente.setStatus(StatusMesa.OCUPADA);
-        salvar(existente);
-    }
-
-    @Transactional
-    public void liberar(Long id){
-        Mesa existente = buscarPorId(id);
-
-        existente.setStatus(StatusMesa.LIVRE);
-        salvar(existente);
-    }
-
-    public boolean estaDisponivel(Long id){
-        Mesa existente = buscarPorId(id);
-        if (existente.getStatus() == StatusMesa.LIVRE){
-            return true;
-        }
-        else{
-            return false;
-        }
-
-    }
-
-
 }
-
-

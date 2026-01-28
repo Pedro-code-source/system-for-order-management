@@ -3,10 +3,9 @@ package br.com.restaurante.controller;
 import br.com.restaurante.dtos.DadosCadastroIngrediente;
 import br.com.restaurante.dtos.DadosListagemIngrediente;
 import br.com.restaurante.model.Ingrediente;
-import br.com.restaurante.service.AdministradorService;
 import br.com.restaurante.service.IngredienteService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,22 +16,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ingredientes")
+@RequiredArgsConstructor
 public class IngredienteController {
 
-    @Autowired
-    private IngredienteService ingredienteService;
-
-    @Autowired
-    private AdministradorService administradorService;
-
+    private final IngredienteService ingredienteService;
 
     @PostMapping
     public ResponseEntity<DadosListagemIngrediente> cadastrar(
             @RequestBody @Valid DadosCadastroIngrediente dto,
             UriComponentsBuilder uriBuilder
     ) {
-
-        Ingrediente ingrediente = administradorService.cadastrarIngrediente(dto);
+        Ingrediente ingrediente = ingredienteService.salvar(dto);
 
         URI uri = uriBuilder
                 .path("/ingredientes/{id}")
@@ -44,14 +38,12 @@ public class IngredienteController {
                 .body(new DadosListagemIngrediente(ingrediente));
     }
 
-
     @GetMapping
     public ResponseEntity<List<DadosListagemIngrediente>> listar() {
         List<DadosListagemIngrediente> lista = ingredienteService.listarTodos()
                 .stream()
                 .map(DadosListagemIngrediente::new)
                 .toList();
-
         return ResponseEntity.ok(lista);
     }
 

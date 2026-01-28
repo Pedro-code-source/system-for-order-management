@@ -1,5 +1,6 @@
 package br.com.restaurante.model;
 
+import br.com.restaurante.dtos.DadosCadastroMesa;
 import br.com.restaurante.model.enums.StatusMesa;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -7,12 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @NoArgsConstructor
 @Entity
 @Getter
-@Table (name = "mesa")
+@Table(name = "mesa")
 public class Mesa {
 
     @Id
@@ -35,15 +34,9 @@ public class Mesa {
     @Column(nullable = false)
     private StatusMesa status;
 
-    @OneToMany(mappedBy = "mesa")
-    private List<PedidoPresencial> pedidosPresenciais;
-
-    @OneToMany(mappedBy = "mesa")
-    private List<Reserva> reservas;
-
-    public Mesa(Integer numero, Integer capacidade, StatusMesa status) {
-        this.numero = numero;
-        this.capacidade = capacidade;
-        this.status = status;
+    public Mesa(DadosCadastroMesa dados) {
+        this.numero = dados.numero();
+        this.capacidade = dados.capacidade();
+        this.status = StatusMesa.LIVRE;
     }
 }
