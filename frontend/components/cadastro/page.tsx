@@ -1,39 +1,103 @@
-import React from "react";
-import styles from "./register.module.css"
+import { useState } from "react";
+import styles from "./register.module.css";
 
-export default function Register({status}){
-    return (
-        <div className={styles.containerRegister}>
-      <form className={styles.formRegister}>
-        <h2>Cadastro</h2>
+type CadastroProps = {
+  status?: "success" | "idle";
+};
 
-        <div className={styles.entradas}>
-          <label>Nome</label>
-          <input disabled = {status === "success"} type="text" placeholder="Seu nome completo" required />
+export default function Cadastro({ status }: CadastroProps) {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+
+  return (
+      <div className={styles.wrapper}>
+        <div className={styles.logoBox}>
+          🍽️
         </div>
 
-        <div className={styles.entradas}>
-          <label>Email</label>
-          <input disabled = {status === "success"} type="email" placeholder="seu@email.com" required />
+        <div className={styles.header}>
+          <h1>Criar Conta</h1>
+          <p>Cadastre-se para acessar o sistema</p>
         </div>
 
-        <div className={styles.entradas}>
-          <label>Telefone</label>
-          <input disabled = {status === "success"} type="tel" placeholder="(83) 99999-9999" required />
-        </div>
+        <div className={styles.container}>
+          <form className={styles.form}>
 
-        <div className={styles.entradas}>
-          <label>Endereço</label>
-          <input disabled = {status === "success"} type="text" placeholder="Rua, número, bairro..." required />
-        </div>
+            <div className={styles.field}>
+              <label>Nome</label>
 
-        <div className={styles.entradas}>
-          <label>Senha</label>
-          <input disabled = {status === "success"} type="password" placeholder="••••••••" required />
-        </div>
+              <div className={styles.inputBox}>
+                <span>👤</span>
 
-        <button disabled = {status === "success"} className={styles.submit} type="submit">Cadastrar</button>
-      </form>
-    </div>
-    )
+                <input
+                    type="text"
+                    placeholder="Seu nome"
+                    value={nome}
+                    disabled={status === "success"}
+                    onChange={(e) => setNome(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label>Email</label>
+
+              <div className={styles.inputBox}>
+                <span>✉️</span>
+
+                <input
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    disabled={status === "success"}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label>Senha</label>
+
+              <div className={styles.inputBox}>
+                <span>🔒</span>
+
+                <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={senha}
+                    disabled={status === "success"}
+                    onChange={(e) => setSenha(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label>Confirmar senha</label>
+
+              <div className={styles.inputBox}>
+                <span>🔐</span>
+
+                <input
+                    type="password"
+                    placeholder="Repita a senha"
+                    value={confirmar}
+                    disabled={status === "success"}
+                    onChange={(e) => setConfirmar(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <button
+                className={styles.submit}
+                disabled={status === "success"}
+            >
+              Criar Conta
+            </button>
+
+          </form>
+        </div>
+      </div>
+  );
 }

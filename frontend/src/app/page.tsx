@@ -22,8 +22,8 @@ export default function Home() {
   return (
     <div>
 
-      <Login status={"success"}/>
-      <Register status={"success"} />
+      <Login status={"idle"}/>
+      <Register status={"idle"} />
     </div>
   );
 }
