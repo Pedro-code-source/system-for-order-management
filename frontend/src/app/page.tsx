@@ -1,7 +1,10 @@
 "use client"
-import { useState, useEffect } from "react";
+
+import ClientLayout from "../../components/layout/ClientLayout";
+import DashboardLayout from "../../components/dashboard/DashboardLayout";
+import DashboardCard from "../../components/dashboard/DashboardCard";
 import Login from "../../components/login/page";
-import Register from "../../components/cadastro/page";
+import Cadastro from "../../components/cadastro/page";
 
 export default function Home() {
   // const data = fetch("http://localhost:8080/clientes")
@@ -20,10 +23,6 @@ export default function Home() {
   //   carregar();
   // }, []);
   return (
-    <div>
-
-      <Login status={"idle"}/>
-      <Register status={"idle"} />
-    </div>
+    <Login></Login>
   );
 }
