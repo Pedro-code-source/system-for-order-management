@@ -33,4 +33,15 @@ public class MesaController {
         List<DadosListagemMesa> lista = mesaService.listarTodos().stream().map(DadosListagemMesa::new).toList();
         return ResponseEntity.ok(lista);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DadosListagemMesa> atualizarStatus(
+            @PathVariable Long id,
+            @RequestBody br.com.restaurante.model.enums.StatusMesa status
+    ) {
+        Mesa mesa = mesaService.buscarPorId(id);
+        mesa.setStatus(status);
+        Mesa mesaSalva = mesaService.salvar(mesa);
+        return ResponseEntity.ok(new DadosListagemMesa(mesaSalva));
+    }
 }

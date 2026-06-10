@@ -10,7 +10,9 @@ public record DadosListagemReserva(
         Integer numeroMesa,
         LocalDateTime dataHora,
         StatusReserva status,
-        Double valor
+        Double valor,
+        Long clienteId,
+        String clienteNome
 ) {
     public DadosListagemReserva(Reserva reserva) {
         this(
@@ -18,7 +20,9 @@ public record DadosListagemReserva(
                 reserva.getMesa().getNumero(),
                 reserva.getDataHora(),
                 reserva.getStatus(),
-                reserva.getValorReserva()
+                reserva.getValorReserva(),
+                reserva.getCliente() != null ? reserva.getCliente().getId() : null,
+                reserva.getCliente() != null ? reserva.getCliente().getNome() : null
         );
     }
 }

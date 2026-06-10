@@ -17,7 +17,9 @@ public record DadosListagemPedidoOnline(
         StatusPedido status,
         Double valorTotal,
         FormaPagamento formaPagamento,
-        List<String> itens
+        List<String> itens,
+        Long clienteId,
+        String clienteNome
 ) {
 
     public DadosListagemPedidoOnline(PedidoOnline pedido) {
@@ -27,7 +29,9 @@ public record DadosListagemPedidoOnline(
                 pedido.getStatus(),
                 pedido.getValorFinal(),
                 pedido.getFormaDePagamento(),
-                pedido.getItens().stream().map(ItemCardapio::getNome).collect(Collectors.toList())
+                pedido.getItens().stream().map(ItemCardapio::getNome).collect(Collectors.toList()),
+                pedido.getCliente() != null ? pedido.getCliente().getId() : null,
+                pedido.getCliente() != null ? pedido.getCliente().getNome() : null
                 );
     }
 }
