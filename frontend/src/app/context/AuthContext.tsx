@@ -1,48 +1,58 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
-
-export type UserRole = 'admin' | 'client' | 'waiter';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-}
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { api } from '../../services/api';
+import { User, UserRole } from '../../types';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const mockUsers = [
-  { id: '1', name: 'Admin User', email: 'admin@restaurant.com', password: 'admin123', role: 'admin' as UserRole },
-  { id: '2', name: 'João Silva', email: 'cliente@email.com', password: 'cliente123', role: 'client' as UserRole },
-  { id: '3', name: 'Maria Santos', email: 'garcom@restaurant.com', password: 'garcom123', role: 'waiter' as UserRole },
-];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (email: string, password: string): boolean => {
-    const foundUser = mockUsers.find(u => u.email === email && u.password === password);
-    if (foundUser) {
-      const { password: _, ...userWithoutPassword } = foundUser;
-      setUser(userWithoutPassword);
-      return true;
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (_) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userRole');
+      }
     }
-    return false;
+    setLoading(false);
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const data = await api.login(email, password);
+      setUser(data);
+      localStorage.setItem('user', JSON.stringify(data));
+      localStorage.setItem('userId', data.id.toString());
+      localStorage.setItem('userRole', data.role);
+      return true;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
+    }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, loading }}>
       {children}
     </AuthContext.Provider>
   );

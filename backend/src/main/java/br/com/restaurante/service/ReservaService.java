@@ -94,12 +94,29 @@ public class ReservaService {
             throw new RuntimeException("Não é possível atualizar a reserva para o passado.");
         }
 
+        Mesa mesaAntiga = reserva.getMesa();
+        Mesa mesaNova = mesaRepository.findById(dto.mesa().getId())
+                .orElseThrow(() -> new RuntimeException("Mesa não encontrada no banco de dados."));
+
+        if (!mesaAntiga.getId().equals(mesaNova.getId())) {
+            if (mesaNova.getStatus() != StatusMesa.LIVRE) {
+                throw new RuntimeException("A nova mesa não está livre.");
+            }
+            mesaAntiga.setStatus(StatusMesa.LIVRE);
+            mesaNova.setStatus(StatusMesa.RESERVADA);
+            mesaRepository.save(mesaAntiga);
+            mesaRepository.save(mesaNova);
+            reserva.setMesa(mesaNova);
+        }
+
+        Cliente clienteNovo = clienteRepository.findById(dto.cliente().getId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado no banco de dados."));
+        reserva.setCliente(clienteNovo);
+
         reserva.setStatus(dto.status());
-        reserva.setMesa(dto.mesa());
-        reserva.setCliente(dto.cliente());
         reserva.setDataHora(dto.dataHora());
         reserva.setValorReserva(dto.valorDaReserva());
 
-        return salvar(reserva);
+        return repository.save(reserva);
     }
 }

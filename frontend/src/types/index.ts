@@ -1,8 +1,10 @@
+export type UserRole = 'admin' | 'client' | 'waiter';
+
 export interface User {
-  id: number;
-  nome: string;
+  id: string;
+  name: string;
   email: string;
-  role: 'admin' | 'client' | 'waiter';
+  role: UserRole;
 }
 
 export interface MenuItem {
@@ -28,12 +30,12 @@ export interface Reservation {
   clientName: string;
   clientPhone: string;
   tableId: string;
-  tableNumber: number;
+  tableNumber?: number;
   date: string;
   time: string;
   guests: number;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-  value: number;
+  value?: number;
 }
 
 export interface Order {
@@ -62,7 +64,7 @@ export interface Ingredient {
 export interface StockMovement {
   id: string;
   ingredientId: string;
-  ingredientName: string;
+  ingredientName?: string;
   type: 'in' | 'out';
   quantity: number;
   date: string;

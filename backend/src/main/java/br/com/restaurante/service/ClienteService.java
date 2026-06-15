@@ -70,11 +70,10 @@ public class ClienteService {
         if (clienteAtualizado.endereco() != null) {
             Endereco enderecoNovo = cliente.getEndereco();
             enderecoNovo.setRua(clienteAtualizado.endereco().rua());
-            enderecoNovo.setBairro(clienteAtualizado.endereco().numero());
-            enderecoNovo.setCep(clienteAtualizado.endereco().bairro());
+            enderecoNovo.setBairro(clienteAtualizado.endereco().bairro());
+            enderecoNovo.setCep(clienteAtualizado.endereco().cep());
             enderecoNovo.setCidade(clienteAtualizado.endereco().cidade());
-            enderecoNovo.setNumero(clienteAtualizado.endereco().cep());
-
+            enderecoNovo.setNumero(clienteAtualizado.endereco().numero());
         }
 
         return clienteRepository.save(cliente);

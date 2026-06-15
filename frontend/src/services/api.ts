@@ -37,10 +37,22 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   // Auth
   async login(email: string, senha: string): Promise<User> {
-    return request<User>('/auth/login', {
+    interface BackendUser {
+      id: number;
+      nome: string;
+      email: string;
+      role: 'admin' | 'client' | 'waiter';
+    }
+    const data = await request<BackendUser>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, senha }),
     });
+    return {
+      id: data.id.toString(),
+      name: data.nome,
+      email: data.email,
+      role: data.role,
+    };
   },
 
   async registerClient(clientData: any): Promise<any> {
