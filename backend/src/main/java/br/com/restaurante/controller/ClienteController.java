@@ -35,12 +35,16 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DadosListagemCliente>> listar() {
-        List<DadosListagemCliente> lista = clienteService.listarTodos()
-                .stream()
+    public ResponseEntity<List<DadosListagemCliente>> listar(@RequestParam(required = false) String nome) {
+        List<Cliente> clientes = clienteService.listarTodos();
+        if (nome != null && !nome.isBlank()) {
+            clientes = clientes.stream()
+                    .filter(c -> c.getNome().toLowerCase().contains(nome.toLowerCase()))
+                    .toList();
+        }
+        List<DadosListagemCliente> lista = clientes.stream()
                 .map(DadosListagemCliente::new)
                 .toList();
-
         return ResponseEntity.ok(lista);
     }
 
