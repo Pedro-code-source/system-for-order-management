@@ -134,6 +134,7 @@
                     </rules>
                     <includes>
                         <include>br/com/restaurante/controller/ClienteController*</include>
+                        <include>br/com/restaurante/controller/PedidoOnlineController*</include>
                     </includes>
                 </configuration>
                 <executions>

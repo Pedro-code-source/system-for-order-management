@@ -2,7 +2,6 @@ package br.com.restaurante.controller;
 
 import br.com.restaurante.dtos.DadosCadastroCliente;
 import br.com.restaurante.dtos.DadosCadastroEndereco;
-import br.com.restaurante.dtos.DadosListagemCliente;
 import br.com.restaurante.model.Cliente;
 import br.com.restaurante.service.ClienteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
