@@ -1,6 +1,6 @@
 import { MenuItem, Table, Reservation, Order, Ingredient, StockMovement, User } from '../types';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'https://system-for-order-management-production.up.railway.app';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE_URL}${path}`;
